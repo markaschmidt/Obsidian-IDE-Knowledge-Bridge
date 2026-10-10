@@ -1,6 +1,6 @@
 # Validation record
 
-Initial validation: 2026-10-10, Windows, Node.js 24.15.0, npm 11.12.1. CI is configured for Node.js 22 on Windows, macOS and Linux; local results do not imply that all host platforms or editor versions were exercised.
+Initial validation: 2026-10-10, Windows, Node.js 24.15.0, npm 11.12.1. GitHub Actions also passed typechecking, all 25 tests, builds and VSIX packaging with Node.js 22 on Windows, macOS and Linux. These checks do not exercise the actual editor or Obsidian user interfaces.
 
 | Check                                                       | Result                                                                |
 | ----------------------------------------------------------- | --------------------------------------------------------------------- |
