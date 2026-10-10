@@ -9,7 +9,14 @@ exports.run = async () => {
   await extension.activate();
   assert.ok(extension.isActive);
   const commands = await vscode.commands.getCommands(true);
-  for (const name of ['enableChat', 'copyDocumentsForChat', 'manageVaults', 'search', 'capture']) {
+  for (const name of [
+    'enableChat',
+    'copyDocumentsForChat',
+    'manageVaults',
+    'search',
+    'capture',
+    'writeNote',
+  ]) {
     assert.ok(commands.includes(`obsidianIntegrated.${name}`), `Missing command: ${name}`);
   }
   await vscode.commands.executeCommand('obsidianIntegrated.enableChat');

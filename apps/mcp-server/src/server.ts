@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { KnowledgeService, captureSchema } from '@knowledge-bridge/core/service';
+import { KnowledgeService, captureSchema, changeOperation } from '@knowledge-bridge/core/service';
 import { pickDocuments } from '@knowledge-bridge/core';
 import { mcpDocumentPicker } from './picker.js';
 import {
@@ -12,7 +12,7 @@ import { registerComposer, COMPOSER_URI } from './composer.js';
 import { registerObsidianPrompt } from './prompts.js';
 
 export function createServer(service: KnowledgeService): McpServer {
-  const server = new McpServer({ name: 'obsidian-integrated', version: '0.4.0' });
+  const server = new McpServer({ name: 'obsidian-integrated', version: '0.5.0' });
   const composer = registerComposer(server, service);
   registerObsidianPrompt(server, service);
   const result = (value: unknown) => ({
@@ -31,6 +31,67 @@ export function createServer(service: KnowledgeService): McpServer {
         ],
       }));
   const read = { readOnlyHint: true, destructiveHint: false, openWorldHint: false };
+  registerAppTool(
+    server,
+    'knowledge_change',
+    {
+      description:
+        'Propose creating, updating, or deleting an Obsidian note. Opens the shared /obsidian vault/document chooser with a draft and Before/After review. The user chooses the destination and explicitly applies it. This call never writes. Wait for the user receipt; do not guess paths, use terminal writes, or repeat a completed operation. Updates require complete Markdown, preserving existing frontmatter and links.',
+      inputSchema: {
+        operation: changeOperation,
+        content: z
+          .string()
+          .max(40000)
+          .optional()
+          .describe(
+            'Complete proposed Markdown for create/update. Omit for delete or to let the user draft it.',
+          ),
+        query: z
+          .string()
+          .max(200)
+          .optional()
+          .describe('Optional user-supplied title/path filter; never an automatic selection.'),
+      },
+      annotations: read,
+      _meta: { ui: { resourceUri: COMPOSER_URI } },
+    },
+    async ({ operation, content, query }) => {
+      if (
+        !getUiCapability(server.server.getClientCapabilities())?.mimeTypes?.includes(
+          RESOURCE_MIME_TYPE,
+        )
+      )
+        return result({
+          status: 'review_required',
+          message:
+            'In the editor, open Obsidian IDE Knowledge Bridge: Open Obsidian Context Builder. Choose Create, Edit, or Delete; choose the vault and note, paste the proposed Markdown if needed, then review and apply. This client cannot display the shared change reviewer. No change has been applied.',
+        });
+      try {
+        if (operation === 'delete' && content !== undefined)
+          throw new Error('Deletion cannot include content');
+        const state = await composer.begin({ operation, content, query });
+        return {
+          content: [
+            {
+              type: 'text' as const,
+              text: 'The Obsidian change reviewer is open. No changes have been applied. Wait for the user to choose a vault and document, review the exact change, and apply it.',
+            },
+          ],
+          _meta: { picker: state },
+        };
+      } catch (error) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text' as const,
+              text: error instanceof Error ? error.message : 'Could not open change reviewer',
+            },
+          ],
+        };
+      }
+    },
+  );
   registerAppTool(
     server,
     'knowledge_select',

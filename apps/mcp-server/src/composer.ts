@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import {
   registerAppResource,
@@ -36,7 +37,10 @@ export function registerComposer(server: McpServer, service: KnowledgeService) {
     {
       description:
         'UI-only operations for the current Obsidian document picker. Does not choose documents for an agent.',
-      inputSchema: composerActionSchema.shape,
+      inputSchema: {
+        ...composerActionSchema.shape,
+        action: z.enum(['browse', 'commit', 'close', 'load', 'preview']),
+      },
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
       _meta: { ui: { resourceUri: COMPOSER_URI, visibility: ['app'] } },
     },
@@ -54,7 +58,7 @@ export function registerComposer(server: McpServer, service: KnowledgeService) {
                   ? 'Document choices updated.'
                   : input.action === 'close'
                     ? 'Picker closed.'
-                    : 'Selected context prepared for the user.',
+                    : 'Selection or change review prepared for the user.',
             },
           ],
           _meta: { picker: data },
@@ -64,6 +68,35 @@ export function registerComposer(server: McpServer, service: KnowledgeService) {
           isError: true,
           content: [
             { type: 'text', text: error instanceof Error ? error.message : 'Picker failed' },
+          ],
+        };
+      }
+    },
+  );
+  registerAppTool(
+    server,
+    'knowledge_apply_change',
+    {
+      description:
+        'UI-only: apply the exact change already reviewed by the user. Never call on behalf of an agent.',
+      inputSchema: { sessionId: z.string().uuid(), reviewId: z.string().uuid() },
+      annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
+      _meta: { ui: { resourceUri: COMPOSER_URI, visibility: ['app'] } },
+    },
+    async ({ sessionId, reviewId }) => {
+      try {
+        return {
+          content: [{ type: 'text' as const, text: 'Reviewed change applied.' }],
+          _meta: { picker: await sessions.apply(sessionId, reviewId) },
+        };
+      } catch (error) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text' as const,
+              text: error instanceof Error ? error.message : 'Change failed',
+            },
           ],
         };
       }

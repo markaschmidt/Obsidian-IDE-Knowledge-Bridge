@@ -1,3 +1,11 @@
+# Bidirectional CRUD validation (v0.5)
+
+Validated on 2026-10-10 with synthetic vaults: shared core policy/review tests, Obsidian bridge and native-writer contract tests, editor/MCP/installer tests, compiled stdio, and three browser tests. The write browser flow creates, reads, updates and recovers a deletion through the real core transport with a synthetic HTTP host; the companion repository separately tests authenticated transport through its native adapter. Scope grants, stale revisions, Rhen changes, registry revocation, identical retries, cancellation and draft-review invalidation are covered. No personal notes were read or modified.
+
+Cursor 3.23.12 (VS Code API 1.128.0) and VS Code 1.118.1 both loaded v0.5.0 in isolated profiles, registered the write command, installed the new skill and mounted the shared builder. The browser review screenshot was visually inspected. Both consumers pin core commit `c88012fffd6b7f38a211f60281489d5690fc8587` and bundle it independently. Packaging and dependency audits passed.
+
+Signed-in Agent chat acceptance and live Obsidian/Rhen UI remain untested. The native adapter is tested through a synthetic contract; this does not establish Obsidian Sync behavior or a policy/mutation transaction with Rhen. Delete has a small check-to-trash interval, with the file retained in local trash. Retry receipts are in-memory. See [WRITES.md](WRITES.md) for setup and limits. Historical results below refer to their named versions.
+
 # Split validation (v0.4)
 
 Validated locally on 2026-10-10: 18 editor/MCP/installer tests, one compiled stdio round trip and two shared browser UI tests passed against the installed commit-pinned core archive. The standalone core passed 40 tests; the Obsidian companion passed two cross-repository scope/capture checks. Both Cursor 3.23.12 and VS Code 1.118.1 loaded v0.4.0 in isolated extension hosts, installed the shared skill and mounted the picker. All three builds/package checks passed and dependency audits reported no advisories.

@@ -2,7 +2,7 @@
 
 Workspace-scoped knowledge exchange between **Obsidian**, **Cursor IDE and its agent/CLI**, and **VS Code**. Vaults remain the source of truth; projects retrieve only their approved notes and write session knowledge to an explicit inbox.
 
-**Status: v0.4 development preview.** This repository owns the Cursor/VS Code extension, shared chat UI and local MCP server. The Obsidian companion is independently maintained in [Knowledge Bridge](https://github.com/markaschmidt/KnowledgeBridge), and policy/retrieval in [Knowledge Bridge Core](https://github.com/markaschmidt/KnowledgeBridgeCore). The shared chip picker is browser-tested through the official MCP Apps SDK; signed-in chat rendering and real-vault end-to-end acceptance remain manual. Semantic/vector RAG, background synchronization, and a supported live Rhen API are roadmap work. No private Rhen source or personal vault notes are included.
+**Status: v0.5 development preview.** This repository owns the Cursor/VS Code extension, shared chat UI and local MCP server. The Obsidian companion is independently maintained in [Knowledge Bridge](https://github.com/markaschmidt/KnowledgeBridge), and policy/retrieval in [Knowledge Bridge Core](https://github.com/markaschmidt/KnowledgeBridgeCore). The shared chip picker is browser-tested through the official MCP Apps SDK; signed-in chat rendering and real-vault end-to-end acceptance remain manual. Semantic/vector RAG, background synchronization, and a supported live Rhen API are roadmap work. No private Rhen source or personal vault notes are included.
 
 ## What is implemented
 
@@ -10,7 +10,7 @@ Workspace-scoped knowledge exchange between **Obsidian**, **Cursor IDE and its a
 - Per-workspace profiles with multiple vaults, include/exclude globs, optional tag filters, read-only defaults and an explicit capture destination per vault.
 - A machine-local vault registry managed from the extension's **Manage Vaults and Workspace** settings command. Workspace profiles reference vault IDs, not absolute vault locations. Changed profiles require renewed local approval.
 - Shared retrieval: local BM25-style ranking, Markdown heading chunks, aliases, wiki/Markdown links, backlinks, one-hop graph expansion, revision hashes and line citations. Scope filters run before ranking and graph construction.
-- MCP tools for document selection, status, search, reading, neighbors and idempotent create-only capture. The same server supports Cursor's IDE and CLI and other local MCP clients.
+- MCP tools for document selection, status, search, reading, neighbors, idempotent create-only capture and reviewed changes through `knowledge_change`. The shared UI supports create, update and recoverable delete with per-vault permissions and Before/After review. See [bidirectional notes](docs/WRITES.md). The same server supports Cursor's IDE and CLI and other local MCP clients.
 - A single VSIX codebase with runtime detection of Cursor's MCP registration API and VS Code's MCP provider API. Manual configuration export is available for CLI use.
 - Interoperability with the separately released Knowledge Bridge Obsidian companion through the same approved registry/profile contract.
 - Conservative Rhen compatibility: deny known locked paths, skip sealed envelopes, reject unreadable installed policy, and never request keys or unlock notes.
@@ -56,7 +56,7 @@ See [architecture](docs/ARCHITECTURE.md), [workspace scoping](docs/WORKSPACE-SCO
 
 This preview uses fresh filesystem validation with an in-memory parse cache. It deliberately has no persistent plaintext/vector index. Notes returned to an AI client may be sent to that client's model provider; local indexing does not imply local inference. Scope enforcement applies to this integration, not to every other tool an agent may have.
 
-Capture adds new Markdown notes with provenance. Existing-note updates, bidirectional conflict resolution, automatic full-session exports, attachments/OCR, remote workspaces and cloud agents are not implemented. Rhen folder unlock exceptions remain denied until there is an authenticated policy contract. Keep the vault out of the code workspace's ordinary indexing roots when using scoped MCP retrieval.
+Capture adds new Markdown notes with provenance. Reviewed edits use the running Obsidian companion with revision checks, and deletion moves notes to vault trash. Automatic conflict merging, durable receipts, full-session exports, attachments/OCR, remote workspaces and cloud agents are not implemented. Rhen folder unlock exceptions remain denied until there is an authenticated policy contract. Keep the vault out of the code workspace's ordinary indexing roots when using scoped MCP retrieval.
 
 MIT licensed. Rhen Vault is a separate product and its source is not part of this repository.
 

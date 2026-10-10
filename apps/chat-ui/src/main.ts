@@ -1,5 +1,5 @@
 import { App, applyDocumentTheme, applyHostStyleVariables } from '@modelcontextprotocol/ext-apps';
-import { mountComposer } from './view.js';
+import { mountKnowledge } from './view.js';
 import type { ComposerInitial, ComposerBundle } from '@knowledge-bridge/core/service';
 
 declare const acquireVsCodeApi: undefined | (() => { postMessage(value: unknown): void });
@@ -41,7 +41,7 @@ if (typeof acquireVsCodeApi === 'function') {
   });
   void rpc('ready')
     .then((state) => {
-      mountComposer(root, state as ComposerInitial, {
+      mountKnowledge(root, state as ComposerInitial, {
         mode: 'clipboard',
         request: (data) => rpc('action', data),
         deliver: async (bundle) => {
@@ -57,7 +57,7 @@ if (typeof acquireVsCodeApi === 'function') {
       root.textContent = error.message;
     });
 } else {
-  const app = new App({ name: 'Obsidian context picker', version: '0.4.0' });
+  const app = new App({ name: 'Obsidian context picker', version: '0.5.0' });
   let mounted = false;
   let dispose: (() => void) | undefined;
   let sessionId: string | undefined;
@@ -89,10 +89,32 @@ if (typeof acquireVsCodeApi === 'function') {
     if (!state?.sessionId || mounted) return;
     mounted = true;
     sessionId = state.sessionId;
-    dispose = mountComposer(root, state, {
+    dispose = mountKnowledge(root, state, {
       mode: 'chat',
+      changed: async (change) => {
+        if (!app.getHostCapabilities()?.message) return;
+        const sent = await app.sendMessage({
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text:
+                'I reviewed and applied this Obsidian change. This is a receipt, not a request to repeat it.\n' +
+                JSON.stringify(change),
+            },
+          ],
+        });
+        if (sent.isError) throw new Error('Could not send change receipt');
+      },
       request: async (input) => {
-        const response = await app.callServerTool({ name: 'knowledge_picker', arguments: input });
+        const response = await app.callServerTool(
+          input.action === 'apply'
+            ? {
+                name: 'knowledge_apply_change',
+                arguments: { sessionId: input.sessionId, reviewId: input.reviewId },
+              }
+            : { name: 'knowledge_picker', arguments: input },
+        );
         if (response.isError)
           throw new Error(
             response.content

@@ -21,7 +21,7 @@ flowchart LR
 
 `core` is host-independent TypeScript. It defines schemas, scope filtering, note/chunk representations, graph resolution and lexical retrieval. It imports neither VS Code nor Obsidian. Embedding and change-event contracts live here for later implementations.
 
-`local-service` owns Node filesystem access, content hashing, approved-profile loading, size limits and create-only writes. Hosts call this service directly; MCP wraps it without exposing arbitrary filesystem paths. Each process receives exactly one registry path and one approved profile path at startup. Tools cannot switch profiles or select an unregistered vault.
+`local-service` owns Node filesystem access, content hashing, approved-profile loading, size limits, legacy create-only capture, reviewed mutation contracts and authenticated loopback transport. Hosts call this service directly; MCP wraps it without exposing arbitrary filesystem paths. Each process receives exactly one registry path and one approved profile path at startup. Tools cannot switch profiles or select an unregistered vault.
 
 `rhen-adapter` is a small, independently implemented compatibility reader. It consumes known policy metadata and recognizes encrypted envelopes. It neither imports Rhen's private source nor performs cryptography. Its conservative behavior is described in [RHEN.md](RHEN.md).
 
@@ -39,7 +39,7 @@ The same built HTML runs in an editor webview with a nonce-based content policy 
 
 **Session → Obsidian:** user invokes capture or authorizes an agent capture → service validates destination → checks current Rhen policy and profile approval → creates a new Markdown note exclusively → includes workspace/request/source/session metadata. A repeated identical request returns the same result; a reused request ID with different content conflicts. Wiki links participate in Obsidian's graph after its normal file detection.
 
-The preview creates the file through Node so it also works while Obsidian is closed. It never updates an existing note. Future in-place edits should be sent through an Obsidian adapter using `Vault.process` plus expected revision checks; offline writes need a coordinated writer and conflict handling before they are supported.
+Legacy capture creates exclusively through Node and works while Obsidian is closed. The v0.5 reviewed flow is `knowledge_change` → common Action/vault/document UI → immutable Before/After review → explicit Apply → authenticated local Obsidian bridge → fresh profile/Rhen checks → native create, Vault.process or local Vault.trash. The companion serializes its writes and keeps bounded retry receipts. Offline existing-note edits, durable receipts and automatic merges are not supported. See [write protocol and limits](WRITES.md).
 
 ## Settings ownership
 

@@ -98,7 +98,7 @@ export function activate(context: vscode.ExtensionContext): void {
                 nodeCommand(),
                 serverArgs(),
                 {},
-                '0.4.0',
+                '0.5.0',
               ),
             ];
           } catch {
@@ -234,10 +234,30 @@ export function activate(context: vscode.ExtensionContext): void {
       });
       if (tags === undefined) return;
       const capture = await vscode.window.showInputBox({
-        title: 'Existing capture folder relative to vault (blank means read only)',
+        title: 'Existing folder for new notes relative to vault (blank disables creation)',
         value: previous?.captureFolder ?? '',
       });
       if (capture === undefined) return;
+      const writes = await vscode.window.showQuickPick(
+        [
+          {
+            label: 'Edit existing notes',
+            value: 'update',
+            picked: previous?.write?.update ?? false,
+          },
+          {
+            label: 'Move notes to vault trash',
+            value: 'delete',
+            picked: previous?.write?.delete ?? false,
+          },
+        ],
+        {
+          title: 'Allow reviewed changes in this workspace',
+          canPickMany: true,
+          placeHolder: 'Leave both unchecked for read / create-only access',
+        },
+      );
+      if (!writes) return;
       const split = (v: string) =>
         v
           .split(',')
@@ -249,6 +269,10 @@ export function activate(context: vscode.ExtensionContext): void {
         exclude: split(exclude),
         tagsAny: split(tags),
         ...(capture.trim() ? { captureFolder: capture.trim() } : {}),
+        write: {
+          update: writes.some((w) => w.value === 'update'),
+          delete: writes.some((w) => w.value === 'delete'),
+        },
       });
       if (scope.captureFolder) await safePath(selected.vault.root, scope.captureFolder);
       profile.scopes = profile.scopes.filter((s) => s.vaultId !== scope.vaultId);
@@ -361,6 +385,14 @@ export function activate(context: vscode.ExtensionContext): void {
       source: vscode.env.appName.toLowerCase().includes('cursor') ? 'cursor' : 'vscode',
     });
     void vscode.window.showInformationMessage(`Saved ${result.path}`);
+  });
+  command('obsidianIntegrated.writeNote', async () => {
+    const editor = vscode.window.activeTextEditor;
+    await openComposer(context, service(), {
+      operation: 'create',
+      content:
+        editor && !editor.selection.isEmpty ? editor.document.getText(editor.selection) : undefined,
+    });
   });
   command('obsidianIntegrated.exportMcp', async () => {
     await service().status();

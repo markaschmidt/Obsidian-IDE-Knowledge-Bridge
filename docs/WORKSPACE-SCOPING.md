@@ -12,7 +12,7 @@ A vault is not automatically accessible because it was registered. It must also 
 
 Each vault occurs once per profile. Its scope has a nonempty positive `include` list, optional `exclude` list and optional `tagsAny` filter. Path matching is case-insensitive for conservative cross-platform behavior. Exclusions win. Hidden paths, non-Markdown files, linked paths, protected notes and notes outside the tag filter are unavailable. A tag never overrides a path exclusion or Rhen denial.
 
-`captureFolder` is optional: omitted means read-only. The folder must already exist, and generated Markdown files must pass the same path filters. Captures receive the first configured tag when `tagsAny` is used. The preview creates new notes only; there is no blanket write grant over the vault.
+`captureFolder` enables creation inside an existing folder. Optional `write: { "update": true, "delete": false }` independently enables reviewed edits or recoverable deletion within the same readable scope. Omitting both fields means read-only. Existing profiles keep their old approval hashes because write grants are optional with no implicit default keys. Both current and proposed text must satisfy tag filters. Legacy captures add the first required tag automatically; reviewed drafts preserve the user-provided Markdown. See [bidirectional notes](WRITES.md).
 
 ```json
 {

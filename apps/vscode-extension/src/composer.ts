@@ -3,11 +3,19 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
-import { ComposerSessions, type KnowledgeService } from '@knowledge-bridge/core/service';
+import {
+  ComposerSessions,
+  type KnowledgeService,
+  type ComposerSeed,
+} from '@knowledge-bridge/core/service';
 
-export async function openComposer(context: vscode.ExtensionContext, service: KnowledgeService) {
+export async function openComposer(
+  context: vscode.ExtensionContext,
+  service: KnowledgeService,
+  seed: ComposerSeed = {},
+) {
   const sessions = new ComposerSessions(service);
-  const initial = await sessions.begin();
+  const initial = await sessions.begin(seed);
   const panel = vscode.window.createWebviewPanel(
     'obsidianIntegrated.composer',
     'Obsidian context',

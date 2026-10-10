@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { installWorkspaceSkill } from '../apps/vscode-extension/src/install-skill.js';
 import { fixture } from './helpers.js';
 
-for (const legacyVersion of ['0.2', '0.3'])
+for (const legacyVersion of ['0.2', '0.3', '0.4'])
   test(
     'unmodified shipped ' + legacyVersion + ' skills upgrade while edited skills remain intact',
     async (t) => {

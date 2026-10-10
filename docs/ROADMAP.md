@@ -28,7 +28,7 @@ Agree a supported policy API with Rhen's maintainer. Version and test the contra
 
 Add draft/review/commit workflows for decisions, tasks, code references and session handoffs. Preserve provenance: workspace ID, source tool/session, original note/chunk revisions, relevant repository/commit and timestamps. Automatically record code-location provenance only with a documented redaction policy.
 
-Existing-note edits require expected-content hashes, a human-reviewable diff, one writer per vault, atomic commit through native APIs, conflict copies, retries and durable idempotency. Never overwrite concurrent human edits. Rename/move must preserve stable note identity and graph edges; deletions require an explicit product workflow. Test Obsidian Sync/Git sync conflicts rather than assuming local atomic writes solve multi-device synchronization.
+Version 0.5 implements revision-checked note edits, Before/After review, serialized native writes, recoverable local trash, and bounded in-memory retry receipts. See [WRITES.md](WRITES.md). Durable idempotency, automatic conflict copies and merging remain future work. Rename/move must preserve stable note identity and graph edges; deletions require an explicit product workflow. Test Obsidian Sync/Git sync conflicts rather than assuming local atomic writes solve multi-device synchronization.
 
 Optional Cursor hooks can propose a handoff after an assistant response or session end. Define consent, retention, size caps, project binding, deduplication and redaction first. Do not record raw transcripts, passwords or hidden reasoning. Capture must stay optional and destination-bound. VS Code must retain equivalent explicit commands even without Cursor-specific hooks.
 
@@ -42,15 +42,15 @@ Remote environments, containers, mobile Obsidian, cloud agents and multiple mach
 
 ## Acceptance matrix
 
-| Workflow                               | Automated foundation                                                        | Host acceptance still required                        |
-| -------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `/obsidian` vault / document selection | Shared UI, Apps bridge, forms, stdio and real editor webview startup tested | Signed-in chat skill invocation, framing and delivery |
-| Scoped vault search / read / graph     | Yes                                                                         | Cursor, VS Code and Obsidian UI                       |
-| New note capture / retry / conflict    | Yes                                                                         | Obsidian file detection and live sync                 |
-| Cursor agent + CLI MCP                 | Protocol/process tested                                                     | Actual agent/tool selection and exported config       |
-| VS Code MCP provider                   | Compiled                                                                    | Installed host registration and approval UX           |
-| Multi-root workspace                   | Specified and implemented                                                   | Multiple saved workspaces and windows                 |
-| Rhen lock, envelope, malformed policy  | Synthetic tests                                                             | Joint live plugin tests and races                     |
-| Semantic RAG / persistent index        | No                                                                          | Planned                                               |
-| In-place note updates / merge          | No                                                                          | Planned                                               |
-| Background session hooks               | No                                                                          | Planned opt-in                                        |
+| Workflow                               | Automated foundation                                                         | Host acceptance still required                        |
+| -------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `/obsidian` vault / document selection | Shared UI, Apps bridge, forms, stdio and real editor webview startup tested  | Signed-in chat skill invocation, framing and delivery |
+| Scoped vault search / read / graph     | Yes                                                                          | Cursor, VS Code and Obsidian UI                       |
+| New note capture / retry / conflict    | Yes                                                                          | Obsidian file detection and live sync                 |
+| Cursor agent + CLI MCP                 | Protocol/process tested                                                      | Actual agent/tool selection and exported config       |
+| VS Code MCP provider                   | Compiled                                                                     | Installed host registration and approval UX           |
+| Multi-root workspace                   | Specified and implemented                                                    | Multiple saved workspaces and windows                 |
+| Rhen lock, envelope, malformed policy  | Synthetic tests                                                              | Joint live plugin tests and races                     |
+| Semantic RAG / persistent index        | No                                                                           | Planned                                               |
+| Reviewed CRUD / automatic merge        | Scoped CRUD, native adapter and browser review tested; merge not implemented | Live Obsidian, dirty buffers and sync races           |
+| Background session hooks               | No                                                                           | Planned opt-in                                        |

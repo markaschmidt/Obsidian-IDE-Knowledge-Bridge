@@ -1,10 +1,12 @@
 ---
 name: obsidian
-description: Choose workspace-scoped Obsidian documents and add their contents to the current chat.
+description: Read or propose creating, editing, and deleting workspace-scoped Obsidian notes.
 disable-model-invocation: true
 ---
 
-Invoke the Obsidian IDE Knowledge Bridge `knowledge_select` MCP tool once. Omit `query` unless the user explicitly supplied a title/path filter after `/obsidian`.
+For a user request to create, edit, or delete a note, invoke `knowledge_change` once with `operation` set to `create`, `update`, or `delete`. For create/update, provide complete proposed Markdown in `content` when known; preserve frontmatter, tags and links. Never use a truncated read as replacement content. Omit content for deletion. Do not choose a vault or target document yourself. The user selects it in the shared vault/document chain and reviews Before/After before applying. If the reviewer is open, stop and wait. An applied receipt confirms completion; never repeat the write. If no app UI is available, direct the user to the editor builder, choose the corresponding action and paste the draft there. Do not substitute terminal writes or the legacy capture tool for this reviewed flow.
+
+For reading or an unqualified /obsidian, invoke the Obsidian IDE Knowledge Bridge `knowledge_select` MCP tool once. Omit `query` unless the user explicitly supplied a title/path filter after `/obsidian`.
 
 Let the tool open the shared context builder: vault choice when needed, then searchable documents and removable chips. Older hosts may display forms instead. Do not choose documents yourself or replace the picker with a search. If multiple Obsidian IDE Knowledge Bridge MCP servers are available and the active workspace's server is unclear, ask which workspace to use; never combine servers.
 

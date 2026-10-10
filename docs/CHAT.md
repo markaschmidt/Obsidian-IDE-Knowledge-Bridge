@@ -1,6 +1,6 @@
 # Choose Obsidian documents in chat
 
-Version 0.3 provides one shared context builder for Cursor and VS Code: **/obsidian → vault → document chips**. The same HTML, controls and selection logic run as an embedded MCP App and as an editor panel. Host framing can differ, but the picker itself is shared.
+Version 0.5 provides one shared context builder for Cursor and VS Code: **/obsidian → vault → document chips**. The same HTML, controls and selection logic run as an embedded MCP App and as an editor panel. Host framing can differ, but the picker itself is shared.
 
 ## Interaction
 
@@ -12,6 +12,10 @@ Version 0.3 provides one shared context builder for Cursor and VS Code: **/obsid
 The builder opens **after command submission**. It does not inject custom tokens into either editor's private input composer. Embedding and message acceptance belong to the host; signed-in chat acceptance remains to be exercised in each editor. The application itself is tested in a browser with the official MCP Apps SDK, including rejected delivery and retry.
 
 For access before sending a chat command, run **Obsidian IDE Knowledge Bridge: Open Obsidian Context Builder**. This opens the same controls in an editor panel in both products. Its final button is **Copy for chat**; paste that result into the desired conversation. It does not silently send a message.
+
+## Write back through the same chain
+
+The Action selector adds **Create note**, **Edit note**, and **Delete note**. The `knowledge_change` tool opens it with an agent draft; `/obsidian create`, `/obsidian update`, and `/obsidian delete` requests route there through the workspace skill. The user selects one destination, reviews Before/After, and applies it. Change receipts enter chat without exporting the original note body. Permission and companion setup are in [WRITES.md](WRITES.md). Mutation review requires MCP Apps or the common editor panel; older read forms do not perform updates/deletions.
 
 ## Optional native argument chain
 
@@ -39,7 +43,7 @@ The standalone harness uses the same fixed profile and policy. UI-capable harnes
 
 ## Setup and troubleshooting
 
-Configure a vault scope through **Manage Vaults and Workspace**, or run **Enable /obsidian in This Workspace** for an existing profile. This installs `.agents/skills/obsidian/SKILL.md` in each workspace folder. Unmodified shipped v0.2 skills upgrade; custom or edited skills are preserved and reported. Reload the editor or start a new chat if the host has not discovered the skill.
+Configure a vault scope through **Manage Vaults and Workspace**, or run **Enable /obsidian in This Workspace** for an existing profile. This installs `.agents/skills/obsidian/SKILL.md` in each workspace folder. Unmodified shipped v0.2/v0.3/v0.4 skills upgrade; custom or edited skills are preserved and reported. Reload the editor or start a new chat if the host has not discovered the skill.
 
 The skill alone does not configure MCP or grant vault access. Enable the workspace server in the host's MCP settings. Avoid duplicate manual and extension registrations. Cursor and VS Code maintain separate local registries by default; configure each explicitly.
 

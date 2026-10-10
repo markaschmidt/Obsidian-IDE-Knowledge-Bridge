@@ -41,6 +41,6 @@ interface AgentPolicyV1 {
 }
 ```
 
-This is a proposal, not an API that Rhen currently exports. It should return policy decisions only, never decrypted content or secrets. Authorization must distinguish user-visible unlock from agent-readable declassification. Unknown versions, disconnects and stale revisions deny access. A future write bridge needs a policy check coupled to the actual file mutation to close the check/write race.
+This is a proposal, not an API that Rhen currently exports. It should return policy decisions only, never decrypted content or secrets. Authorization must distinguish user-visible unlock from agent-readable declassification. Unknown versions, disconnects and stale revisions deny access. The v0.5 native write bridge repeats disk-policy checks before mutation, but a supported Rhen transaction coupling policy and mutation is still needed to eliminate the remaining policy-check/write race.
 
 Acceptance requires joint tests with Rhen: lock/unlock/rename, folder exceptions, startup reconciliation, external edits, rapid lock during retrieval, Rhen removal, vault moves and policy unavailability. All development fixtures must be synthetic.

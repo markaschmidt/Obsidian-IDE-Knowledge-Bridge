@@ -1,10 +1,69 @@
-import type { ComposerInitial, ComposerPage, ComposerBundle } from '@knowledge-bridge/core/service';
+import type {
+  ComposerInitial,
+  ComposerPage,
+  ComposerBundle,
+  ChangeResult,
+} from '@knowledge-bridge/core/service';
 import type { DocumentChoice } from '@knowledge-bridge/core';
+import { mountChanges } from './changes.js';
 
 export interface ComposerBridge {
   request(input: Record<string, unknown>): Promise<unknown>;
   deliver(bundle: ComposerBundle): Promise<void>;
   mode: 'chat' | 'clipboard';
+  changed?(result: ChangeResult): Promise<void>;
+}
+export function mountKnowledge(
+  root: HTMLElement,
+  initial: ComposerInitial,
+  bridge: ComposerBridge,
+) {
+  root.replaceChildren();
+  const label = document.createElement('label');
+  label.textContent = 'Action ';
+  const action = document.createElement('select');
+  action.setAttribute('aria-label', 'Action');
+  for (const [name, value] of [
+    ['Read notes', 'read'],
+    ['Create note', 'create'],
+    ['Edit note', 'update'],
+    ['Delete note', 'delete'],
+  ])
+    action.add(new Option(name, value));
+  action.value = initial.operation ?? 'read';
+  label.append(action);
+  root.append(label);
+  const body = document.createElement('div');
+  root.append(body);
+  let dispose: (() => void) | undefined;
+  const mount = () => {
+    dispose?.();
+    dispose =
+      action.value === 'read'
+        ? mountComposer(body, initial, bridge)
+        : mountChanges(body, initial, bridge, action.value as 'create' | 'update' | 'delete');
+  };
+  // Lock action changes during requests, including an in-flight mutation.
+  let pending = 0;
+  let closed = false;
+  const originalRequest = bridge.request.bind(bridge);
+  bridge = {
+    ...bridge,
+    request: async (input) => {
+      action.disabled = true;
+      pending++;
+      try {
+        const result = await originalRequest(input);
+        if (input.action === 'close' || input.action === 'apply') closed = true;
+        return result;
+      } finally {
+        action.disabled = --pending > 0 || closed;
+      }
+    },
+  };
+  action.onchange = mount;
+  mount();
+  return () => dispose?.();
 }
 /** The same DOM, state transitions and controls run in both editors and MCP Apps. */
 export function mountComposer(root: HTMLElement, initial: ComposerInitial, bridge: ComposerBridge) {
