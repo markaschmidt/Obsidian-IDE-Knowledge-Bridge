@@ -19,7 +19,8 @@ To debug from source, open this repository and use the supplied **Run Obsidian I
 3. Run **Configure a vault for this workspace**. Select include globs such as `Projects/Alpha/**/*.md`, exclusions and optional tags.
 4. Leave capture folder blank for read-only access, or select an existing vault-relative inbox inside the included scope. Create that folder in Obsidian first if needed.
 5. The native configuration flow saves and approves the chosen scope. Editing the JSON later requires **Review and approve workspace profile**.
-6. Run **Search Workspace Knowledge** to inspect retrieved notes. Select editor text and run **Capture Selection to Vault** to save an explicit handoff.
+6. Configuration installs the shared `/obsidian` skill into each workspace folder. Submit `/obsidian` in Agent chat to choose a scoped vault (when needed), then documents. Existing profiles can run **Enable /obsidian in This Workspace**. Reload the editor or start a new chat if the command is not discovered yet. See [chat workflow](CHAT.md) for paging, cancellation and fallback behavior.
+7. Run **Search Workspace Knowledge** for ordinary retrieval. Select editor text and run **Capture Selection to Vault** to save an explicit handoff.
 
 The command is the plugin's vault-management settings surface. The standard **Obsidian Integrated** settings section contains the workspace profile location and machine Node path. No vault directory is stored in project settings.
 

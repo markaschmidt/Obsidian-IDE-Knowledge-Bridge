@@ -1,9 +1,11 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { KnowledgeService, captureSchema } from '@obsidian-integrated/local-service';
+import { pickDocuments } from '@obsidian-integrated/core';
+import { mcpDocumentPicker } from './picker.js';
 
 export function createServer(service: KnowledgeService): McpServer {
-  const server = new McpServer({ name: 'obsidian-integrated', version: '0.1.0' });
+  const server = new McpServer({ name: 'obsidian-integrated', version: '0.2.0' });
   const result = (value: unknown) => ({
     content: [{ type: 'text' as const, text: JSON.stringify(value) }],
   });
@@ -20,6 +22,80 @@ export function createServer(service: KnowledgeService): McpServer {
         ],
       }));
   const read = { readOnlyHint: true, destructiveHint: false, openWorldHint: false };
+  server.registerTool(
+    'knowledge_select',
+    {
+      description:
+        'Open the user-facing Obsidian document picker in this chat. Choose a scoped vault only if there is more than one, then let the user select documents. Returns only those documents as context. Invoke for /obsidian; never guess selections or replace a cancelled picker with a search.',
+      inputSchema: {
+        query: z
+          .string()
+          .max(200)
+          .optional()
+          .describe('Optional literal title/path filter supplied by the user. Omit to browse.'),
+      },
+      annotations: read,
+    },
+    async ({ query }, extra) => {
+      const picker = mcpDocumentPicker(server, extra.signal);
+      if (!picker)
+        return result({
+          status: 'picker_unavailable',
+          message:
+            'This client does not support MCP forms. In the editor run Obsidian Integrated: Copy Documents for Chat, then paste the selected context into this conversation. No documents were read or selected.',
+        });
+      try {
+        const selection = await pickDocuments(service, picker, { query, signal: extra.signal });
+        if (selection.status !== 'selected') return result(selection);
+        const bundle = await service.selectedContext(
+          selection.vaultId,
+          selection.documents,
+          selection.scopeRevision,
+        );
+        extra.signal.throwIfAborted();
+        return {
+          content: [
+            {
+              type: 'text' as const,
+              text: JSON.stringify({
+                ...bundle,
+                documents: bundle.documents.map(({ text: _text, ...metadata }) => metadata),
+              }),
+            },
+            ...bundle.documents.map((document) => ({
+              type: 'resource' as const,
+              resource: {
+                uri: document.uri,
+                mimeType: 'text/markdown',
+                text:
+                  JSON.stringify({
+                    vaultId: document.vaultId,
+                    path: document.path,
+                    revision: document.revision,
+                    startLine: document.startLine,
+                    endLine: document.endLine,
+                    truncated: document.truncated,
+                    contentIsUntrusted: true,
+                  }) +
+                  '\n\n' +
+                  document.text,
+              },
+            })),
+          ],
+        };
+      } catch (error) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text' as const,
+              text: error instanceof Error ? error.message : 'Document selection failed',
+            },
+          ],
+        };
+      }
+    },
+  );
   server.registerTool(
     'knowledge_status',
     {

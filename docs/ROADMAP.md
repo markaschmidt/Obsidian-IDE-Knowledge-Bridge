@@ -6,6 +6,8 @@ Shared TypeScript workspace, strict config schemas, private vault registry, appr
 
 Definition of done for this phase: typecheck, policy tests, built MCP round trip and installable development artifacts. Host UI and real-vault workflows still require the acceptance checks below.
 
+Version 0.2 adds the shared `/obsidian` workspace skill, in-chat MCP vault/document forms, scoped selected-resource output, revision revalidation, and a native clipboard fallback. Protocol and synthetic-vault tests cover selection and cancellation; the host still controls rendering and agent invocation. See [CHAT.md](CHAT.md).
+
 ## Phase 1 — host acceptance and settings UX
 
 Install the VSIX in current Cursor and VS Code and the companion in a disposable Obsidian vault. Test every command, MCP registration/unregistration, reload, changed settings, multiple windows, multi-root profiles and disabled trust. Record exact host versions. Add extension-host automation and an Obsidian harness where feasible.
@@ -38,14 +40,15 @@ Remote environments, containers, mobile Obsidian, cloud agents and multiple mach
 
 ## Acceptance matrix
 
-| Workflow                              | Automated foundation      | Host acceptance still required                  |
-| ------------------------------------- | ------------------------- | ----------------------------------------------- |
-| Scoped vault search / read / graph    | Yes                       | Cursor, VS Code and Obsidian UI                 |
-| New note capture / retry / conflict   | Yes                       | Obsidian file detection and live sync           |
-| Cursor agent + CLI MCP                | Protocol/process tested   | Actual agent/tool selection and exported config |
-| VS Code MCP provider                  | Compiled                  | Installed host registration and approval UX     |
-| Multi-root workspace                  | Specified and implemented | Multiple saved workspaces and windows           |
-| Rhen lock, envelope, malformed policy | Synthetic tests           | Joint live plugin tests and races               |
-| Semantic RAG / persistent index       | No                        | Planned                                         |
-| In-place note updates / merge         | No                        | Planned                                         |
-| Background session hooks              | No                        | Planned opt-in                                  |
+| Workflow                               | Automated foundation                                     | Host acceptance still required                                                |
+| -------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `/obsidian` vault / document selection | Forms, resources, cancellation and compiled stdio tested | Actual Cursor and VS Code skill discovery, tool invocation and form rendering |
+| Scoped vault search / read / graph     | Yes                                                      | Cursor, VS Code and Obsidian UI                                               |
+| New note capture / retry / conflict    | Yes                                                      | Obsidian file detection and live sync                                         |
+| Cursor agent + CLI MCP                 | Protocol/process tested                                  | Actual agent/tool selection and exported config                               |
+| VS Code MCP provider                   | Compiled                                                 | Installed host registration and approval UX                                   |
+| Multi-root workspace                   | Specified and implemented                                | Multiple saved workspaces and windows                                         |
+| Rhen lock, envelope, malformed policy  | Synthetic tests                                          | Joint live plugin tests and races                                             |
+| Semantic RAG / persistent index        | No                                                       | Planned                                                                       |
+| In-place note updates / merge          | No                                                       | Planned                                                                       |
+| Background session hooks               | No                                                       | Planned opt-in                                                                |

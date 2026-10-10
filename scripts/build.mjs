@@ -26,6 +26,8 @@ await build({
 await mkdir('apps/vscode-extension/dist/mcp', { recursive: true });
 await copyFile('dist/mcp/server.mjs', 'apps/vscode-extension/dist/mcp/server.mjs');
 await copyFile('LICENSE', 'apps/vscode-extension/LICENSE');
+await mkdir('apps/vscode-extension/dist/skill', { recursive: true });
+await copyFile('integrations/obsidian/SKILL.md', 'apps/vscode-extension/dist/skill/SKILL.md');
 await build({
   ...common,
   entryPoints: ['apps/obsidian-plugin/src/main.ts'],

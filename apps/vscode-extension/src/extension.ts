@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { dirname, join, resolve, isAbsolute } from 'node:path';
-import { realpath } from 'node:fs/promises';
+import { realpath, readFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import {
   emptyRegistry,
@@ -19,6 +19,8 @@ import {
   digest,
 } from '@obsidian-integrated/local-service';
 import { cursorMcp } from './cursor.js';
+import { installWorkspaceSkill } from './install-skill.js';
+import { copyDocumentsForChat } from './chat.js';
 
 export function activate(context: vscode.ExtensionContext): void {
   const registryPath = join(context.globalStorageUri.fsPath, 'vaults.json');
@@ -95,7 +97,7 @@ export function activate(context: vscode.ExtensionContext): void {
                 nodeCommand(),
                 serverArgs(),
                 {},
-                '0.1.0',
+                '0.2.0',
               ),
             ];
           } catch {
@@ -119,6 +121,29 @@ export function activate(context: vscode.ExtensionContext): void {
       return value;
     }
   }
+  async function enableChat(): Promise<void> {
+    await service().status();
+    const contents = await readFile(
+      join(context.extensionPath, 'dist', 'skill', 'SKILL.md'),
+      'utf8',
+    );
+    const conflicts: string[] = [];
+    for (const folder of vscode.workspace.workspaceFolders ?? []) {
+      const result = await installWorkspaceSkill(folder.uri.fsPath, contents);
+      if (result.status === 'conflict') conflicts.push(result.path);
+    }
+    if (conflicts.length) {
+      output.appendLine(`Existing /obsidian skills were preserved:\n${conflicts.join('\n')}`);
+      output.show();
+      void vscode.window.showWarningMessage(
+        'An existing /obsidian skill was preserved. Compare it with the bundled skill before using this integration.',
+      );
+    } else {
+      void vscode.window.showInformationMessage(
+        '/obsidian is ready in this workspace. Submit it in Agent chat to choose a vault and documents.',
+      );
+    }
+  }
   async function manage(): Promise<void> {
     const path = profilePath();
     const action = await vscode.window.showQuickPick(
@@ -129,6 +154,7 @@ export function activate(context: vscode.ExtensionContext): void {
         'Edit workspace profile',
         'Review and approve workspace profile',
         'Show registry location',
+        'Enable /obsidian in this workspace',
         'Forget a vault on this machine',
       ],
       { title: 'Obsidian Integrated settings' },
@@ -229,6 +255,7 @@ export function activate(context: vscode.ExtensionContext): void {
       await saveJson(path, profile);
       await approveProfile(registryPath, path);
       await refresh();
+      await enableChat();
     } else if (action === 'Remove a vault from this workspace') {
       const selected = await vscode.window.showQuickPick(profile.scopes.map((s) => s.vaultId));
       if (!selected) return;
@@ -253,6 +280,8 @@ export function activate(context: vscode.ExtensionContext): void {
     } else if (action === 'Show registry location') {
       output.appendLine(`Registry: ${registryPath}\nProfile: ${path}`);
       output.show();
+    } else if (action === 'Enable /obsidian in this workspace') {
+      await enableChat();
     } else if (action === 'Forget a vault on this machine') {
       const id = await vscode.window.showQuickPick(catalog.vaults.map((v) => v.id));
       if (!id) return;
@@ -276,6 +305,8 @@ export function activate(context: vscode.ExtensionContext): void {
     );
   }
   command('obsidianIntegrated.manageVaults', manage);
+  command('obsidianIntegrated.enableChat', enableChat);
+  command('obsidianIntegrated.copyDocumentsForChat', () => copyDocumentsForChat(service()));
   command('obsidianIntegrated.search', async () => {
     const query = await vscode.window.showInputBox({
       title: 'Search this workspace’s Obsidian knowledge',

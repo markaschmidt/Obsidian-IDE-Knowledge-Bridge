@@ -31,6 +31,8 @@ flowchart LR
 
 ## Knowledge flow
 
+**Explicit chat context:** a shared workspace skill invokes `knowledge_select` → `core` manages per-invocation vault/document selection → MCP displays host-rendered elicitation forms → `local-service` checks the same profile and selected note revisions again → selected bodies return as resources with provenance. The native clipboard fallback uses the same selection state machine. Neither path expands graph neighbors or persists selection across chats. See [CHAT.md](CHAT.md).
+
 **Obsidian → session:** search tool → reload registry/profile → confirm local approval → filter paths → enforce Rhen → read raw disk text → reject encrypted envelopes → parse/filter tags → rank chunks → add in-scope graph neighbors → return citations. External links are not fetched. Note text is explicitly untrusted reference data.
 
 **Session → Obsidian:** user invokes capture or authorizes an agent capture → service validates destination → checks current Rhen policy and profile approval → creates a new Markdown note exclusively → includes workspace/request/source/session metadata. A repeated identical request returns the same result; a reused request ID with different content conflicts. Wiki links participate in Obsidian's graph after its normal file detection.

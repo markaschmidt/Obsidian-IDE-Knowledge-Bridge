@@ -2,14 +2,15 @@
 
 Workspace-scoped knowledge exchange between **Obsidian**, **Cursor IDE and its agent/CLI**, and **VS Code**. Vaults remain the source of truth; projects retrieve only their approved notes and write session knowledge to an explicit inbox.
 
-**Status: tested development foundation, not a production release.** This repository includes a functioning local MCP server, a shared Cursor/VS Code extension, and a desktop Obsidian companion. Editor installation and real-vault end-to-end acceptance remain manual. Semantic/vector RAG, background synchronization, and a supported live Rhen API are roadmap work. No private Rhen source or personal vault notes are included.
+**Status: v0.2 development preview.** This repository includes a functioning local MCP server, a shared Cursor/VS Code extension, and a desktop Obsidian companion. Automated tests cover the chat picker protocol; actual chat rendering and real-vault end-to-end acceptance remain manual. Semantic/vector RAG, background synchronization, and a supported live Rhen API are roadmap work. No private Rhen source or personal vault notes are included.
 
 ## What is implemented
 
+- `/obsidian` in Agent chat: submit the command, choose a vault if more than one is scoped, then check the documents to share. The shared skill calls an MCP form; the editor controls its appearance. A native copy-and-paste picker supports clients without chat forms. See [the chat workflow and limits](docs/CHAT.md).
 - Per-workspace profiles with multiple vaults, include/exclude globs, optional tag filters, read-only defaults and an explicit capture destination per vault.
 - A machine-local vault registry managed from the extension's **Manage Vaults and Workspace** settings command. Workspace profiles reference vault IDs, not absolute vault locations. Changed profiles require renewed local approval.
 - Shared retrieval: local BM25-style ranking, Markdown heading chunks, aliases, wiki/Markdown links, backlinks, one-hop graph expansion, revision hashes and line citations. Scope filters run before ranking and graph construction.
-- MCP tools for status, search, reading, neighbors and idempotent create-only capture. The same server supports Cursor's IDE and CLI and other local MCP clients.
+- MCP tools for document selection, status, search, reading, neighbors and idempotent create-only capture. The same server supports Cursor's IDE and CLI and other local MCP clients.
 - A single VSIX codebase with runtime detection of Cursor's MCP registration API and VS Code's MCP provider API. Manual configuration export is available for CLI use.
 - An Obsidian settings tab and commands for scoped browsing, native graph neighbors and selection capture.
 - Conservative Rhen compatibility: deny known locked paths, skip sealed envelopes, reject unreadable installed policy, and never request keys or unlock notes.
@@ -50,7 +51,7 @@ packages/
   rhen-adapter/         Conservative disk-policy compatibility; no cryptography
 docs/                   Architecture, source review, scope/RAG design and roadmap
 examples/               Portable workspace and machine-registry templates
-integrations/cursor/    Optional agent rule template
+integrations/           Shared /obsidian skill and optional Cursor rule template
 tests/                  Synthetic-vault policy and MCP tests
 ```
 

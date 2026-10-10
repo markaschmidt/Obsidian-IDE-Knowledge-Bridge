@@ -20,6 +20,8 @@ Reviewed 2026-10-10. This table records supported integration surfaces and the a
 
 ## Important distinctions
 
+The v0.2 chat flow uses [Cursor skills](https://cursor.com/docs/skills) and [VS Code skills](https://code.visualstudio.com/docs/agent-customization/agent-skills), both of which discover `.agents/skills/`. A skill named `obsidian` with `disable-model-invocation: true` supplies the explicit slash command. The [MCP elicitation contract](https://modelcontextprotocol.io/specification/2025-11-25/client/elicitation) supplies flat forms for vault selection and document checkboxes; Cursor and VS Code document elicitation support. This is a post-submit tool interaction, not an API for changing either host's private composer UI. Primitive checkbox fields retain compatibility with older form clients. Prompt-file-only integrations and undocumented chat attachment commands are not required.
+
 MCP is the agent-facing integration; the extension provides settings and editor actions. Neither replaces the other. Dynamic extension registration does not by itself configure an independent CLI process. The export command therefore generates explicit arguments for the same profile.
 
 Cursor's public APIs do not imply unrestricted access to an editor's entire private chat store. No private session database is read. Explicit captures and MCP handoffs form the first portable workflow. Hook-based final-response drafts can be added after consent, redaction, retention and payload compatibility are specified. Do not capture hidden reasoning events.

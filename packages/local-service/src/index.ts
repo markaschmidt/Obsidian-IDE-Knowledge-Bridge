@@ -7,6 +7,9 @@ import {
   graph,
   notePath,
   type Note,
+  type PickerScope,
+  type DocumentChoice,
+  MAX_SELECTED_DOCUMENTS,
 } from '@obsidian-integrated/core';
 import { readRhenPolicy, isSealed } from '@obsidian-integrated/rhen-adapter';
 import { digest, loadApproved, profileDigest } from './config.js';
@@ -41,16 +44,19 @@ export class KnowledgeService {
       mode: 'local-lexical-preview',
     };
   }
-  async snapshot(): Promise<{
+  async snapshot(selectedVaultId?: string): Promise<{
     notes: Note[];
     profile: Awaited<ReturnType<typeof loadApproved>>['profile'];
   }> {
     const { profile, bindings } = await loadApproved(this.registryPath, this.profilePath);
+    if (selectedVaultId && !bindings.some((b) => b.vault.id === selectedVaultId))
+      throw new Error('Vault unavailable in this workspace scope');
     const next = new Map<string, Note>();
     const policies: { root: string; mode: 'auto' | 'required'; revision: string }[] = [];
     let bytes = 0;
     try {
       for (const { vault, scope } of bindings) {
+        if (selectedVaultId && vault.id !== selectedVaultId) continue;
         const policy = await readRhenPolicy(vault.root, vault.rhen);
         policies.push({ root: vault.root, mode: vault.rhen, revision: await policy.revision() });
         for (const path of await listMarkdown(vault.root)) {
@@ -88,6 +94,68 @@ export class KnowledgeService {
       this.cache.clear();
       throw error;
     }
+  }
+  async pickerScope(): Promise<PickerScope> {
+    const { profile, bindings } = await loadApproved(this.registryPath, this.profilePath);
+    return {
+      workspaceId: profile.workspaceId,
+      revision: digest(JSON.stringify({ profile, bindings })),
+      vaults: bindings.map(({ vault }) => ({ id: vault.id, name: vault.name })),
+    };
+  }
+  private async assertPickerScope(expected: string): Promise<PickerScope> {
+    const current = await this.pickerScope();
+    if (current.revision !== expected)
+      throw new Error('Workspace scope changed while choosing documents. Run /obsidian again.');
+    return current;
+  }
+  async pickerDocuments(vaultId: string, expectedScope: string): Promise<DocumentChoice[]> {
+    await this.assertPickerScope(expectedScope);
+    const { notes } = await this.snapshot(vaultId);
+    await this.assertPickerScope(expectedScope);
+    return notes.map(({ path, title, revision }) => ({ path, title, revision }));
+  }
+  async selectedContext(vaultId: string, choices: DocumentChoice[], expectedScope: string) {
+    const scope = await this.assertPickerScope(expectedScope);
+    if (
+      !choices.length ||
+      choices.length > MAX_SELECTED_DOCUMENTS ||
+      new Set(choices.map((c) => c.path)).size !== choices.length
+    )
+      throw new Error('Invalid selected document count');
+    const { notes, profile } = await this.snapshot(vaultId);
+    const selected = choices.map((choice) => {
+      const note = notes.find((n) => n.path === choice.path && n.vaultId === vaultId);
+      if (!note || note.revision !== choice.revision)
+        throw new Error(
+          'A selected document changed or is no longer readable. Run /obsidian again.',
+        );
+      return note;
+    });
+    await this.validateResults(selected);
+    await this.assertPickerScope(expectedScope);
+    const allowance = Math.floor(profile.retrieval.maxChars / selected.length);
+    return {
+      status: 'selected' as const,
+      workspaceId: scope.workspaceId,
+      contentIsUntrusted: true,
+      selectionOnly: true,
+      documents: selected.map((note) => {
+        const text = note.text.slice(0, allowance);
+        return {
+          vaultId,
+          path: note.path,
+          title: note.title,
+          revision: note.revision,
+          uri: `obsidian-integrated://note/${encodeURIComponent(vaultId)}/${note.path.split('/').map(encodeURIComponent).join('/')}`,
+          text,
+          startLine: 1,
+          endLine: text.split('\n').length,
+          totalCharacters: note.text.length,
+          truncated: text.length < note.text.length,
+        };
+      }),
+    };
   }
   private async validateResults(notes: Note[]): Promise<void> {
     try {

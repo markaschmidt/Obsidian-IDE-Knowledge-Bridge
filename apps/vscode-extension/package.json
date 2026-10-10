@@ -1,7 +1,7 @@
 {
   "name": "obsidian-integrated",
   "displayName": "Obsidian Integrated",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Manage workspace-scoped Obsidian knowledge for Cursor and VS Code",
   "publisher": "markaschmidt",
   "license": "MIT",
@@ -34,6 +34,14 @@
   },
   "contributes": {
     "commands": [
+      {
+        "command": "obsidianIntegrated.enableChat",
+        "title": "Obsidian Integrated: Enable /obsidian in This Workspace"
+      },
+      {
+        "command": "obsidianIntegrated.copyDocumentsForChat",
+        "title": "Obsidian Integrated: Copy Documents for Chat"
+      },
       {
         "command": "obsidianIntegrated.manageVaults",
         "title": "Obsidian Integrated: Manage Vaults and Workspace"
@@ -85,7 +93,7 @@
     }
   },
   "dependencies": {
-    "@obsidian-integrated/core": "0.1.0",
-    "@obsidian-integrated/local-service": "0.1.0"
+    "@obsidian-integrated/core": "0.2.0",
+    "@obsidian-integrated/local-service": "0.2.0"
   }
 }
