@@ -1,5 +1,5 @@
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { KnowledgeService } from '@obsidian-integrated/local-service';
+import { KnowledgeService } from '@knowledge-bridge/core/service';
 import { createServer } from './server.js';
 
 function option(name: string): string {

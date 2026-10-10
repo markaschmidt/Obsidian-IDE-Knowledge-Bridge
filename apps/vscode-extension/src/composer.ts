@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
-import { ComposerSessions, type KnowledgeService } from '@obsidian-integrated/local-service';
+import { ComposerSessions, type KnowledgeService } from '@knowledge-bridge/core/service';
 
 export async function openComposer(context: vscode.ExtensionContext, service: KnowledgeService) {
   const sessions = new ComposerSessions(service);

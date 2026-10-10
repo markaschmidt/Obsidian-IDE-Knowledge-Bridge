@@ -4,7 +4,7 @@
       "type": "stdio",
       "command": "node",
       "args": [
-        "C:/REPLACE/Obsidian-Integrated/dist/mcp/server.mjs",
+        "C:/REPLACE/Obsidian-IDE-Knowledge-Bridge/dist/mcp/server.mjs",
         "--registry",
         "C:/REPLACE/private/vaults.json",
         "--profile",

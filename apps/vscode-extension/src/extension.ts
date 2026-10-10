@@ -8,7 +8,7 @@ import {
   scopeSchema,
   idSchema,
   type Registry,
-} from '@obsidian-integrated/core';
+} from '@knowledge-bridge/core';
 import {
   KnowledgeService,
   saveJson,
@@ -17,7 +17,7 @@ import {
   approveProfile,
   safePath,
   digest,
-} from '@obsidian-integrated/local-service';
+} from '@knowledge-bridge/core/service';
 import { cursorMcp } from './cursor.js';
 import { installWorkspaceSkill } from './install-skill.js';
 import { copyDocumentsForChat } from './chat.js';
@@ -25,7 +25,7 @@ import { openComposer } from './composer.js';
 
 export function activate(context: vscode.ExtensionContext): void {
   const registryPath = join(context.globalStorageUri.fsPath, 'vaults.json');
-  const output = vscode.window.createOutputChannel('Obsidian Integrated');
+  const output = vscode.window.createOutputChannel('Obsidian IDE Knowledge Bridge');
   const changes = new vscode.EventEmitter<void>();
   let cursorName: string | undefined;
   let refreshGeneration = 0;
@@ -98,7 +98,7 @@ export function activate(context: vscode.ExtensionContext): void {
                 nodeCommand(),
                 serverArgs(),
                 {},
-                '0.3.0',
+                '0.4.0',
               ),
             ];
           } catch {
@@ -158,7 +158,7 @@ export function activate(context: vscode.ExtensionContext): void {
         'Enable /obsidian in this workspace',
         'Forget a vault on this machine',
       ],
-      { title: 'Obsidian Integrated settings' },
+      { title: 'Obsidian IDE Knowledge Bridge settings' },
     );
     if (!action) return;
     const catalog = await registry();

@@ -11,7 +11,7 @@ Version 0.3 provides one shared context builder for Cursor and VS Code: **/obsid
 
 The builder opens **after command submission**. It does not inject custom tokens into either editor's private input composer. Embedding and message acceptance belong to the host; signed-in chat acceptance remains to be exercised in each editor. The application itself is tested in a browser with the official MCP Apps SDK, including rejected delivery and retry.
 
-For access before sending a chat command, run **Obsidian Integrated: Open Obsidian Context Builder**. This opens the same controls in an editor panel in both products. Its final button is **Copy for chat**; paste that result into the desired conversation. It does not silently send a message.
+For access before sending a chat command, run **Obsidian IDE Knowledge Bridge: Open Obsidian Context Builder**. This opens the same controls in an editor panel in both products. Its final button is **Copy for chat**; paste that result into the desired conversation. It does not silently send a message.
 
 ## Optional native argument chain
 

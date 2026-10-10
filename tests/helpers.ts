@@ -1,8 +1,8 @@
 import { mkdtemp, mkdir, writeFile, rm, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, isAbsolute } from 'node:path';
-import { profileSchema } from '@obsidian-integrated/core';
-import { saveJson, approveProfile, KnowledgeService } from '@obsidian-integrated/local-service';
+import { profileSchema } from '@knowledge-bridge/core';
+import { saveJson, approveProfile, KnowledgeService } from '@knowledge-bridge/core/service';
 
 export async function fixture() {
   const base = await realpath(await mkdtemp(join(tmpdir(), 'obsidian-integrated-test-'))),

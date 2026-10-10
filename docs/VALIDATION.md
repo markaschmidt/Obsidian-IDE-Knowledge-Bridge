@@ -1,3 +1,9 @@
+# Split validation (v0.4)
+
+Validated locally on 2026-10-10: 18 editor/MCP/installer tests, one compiled stdio round trip and two shared browser UI tests passed against the installed commit-pinned core archive. The standalone core passed 40 tests; the Obsidian companion passed two cross-repository scope/capture checks. Both Cursor 3.23.12 and VS Code 1.118.1 loaded v0.4.0 in isolated extension hosts, installed the shared skill and mounted the picker. All three builds/package checks passed and dependency audits reported no advisories.
+
+The v0.4 split moves the core policy suite to KnowledgeBridgeCore and the Obsidian build to KnowledgeBridge. The record below documents the earlier v0.3 baseline. Current repository checks cover the editor/MCP consumer against its independently pinned core dependency; each repository runs its own three-OS CI and release workflow. Signed-in chat and live Obsidian/Rhen UI acceptance remain manual.
+
 # Validation record
 
 Validation: 2026-10-10, Windows, Node.js 24.15.0, npm 11.12.1. Version 0.3 adds the shared chip UI, browser SDK tests and real webview startup checks. Each push runs the Node.js 22 Windows/macOS/Linux matrix; Linux also runs the browser tests.

@@ -9,7 +9,7 @@ import {
   ComposerSessions,
   composerActionSchema,
   type KnowledgeService,
-} from '@obsidian-integrated/local-service';
+} from '@knowledge-bridge/core/service';
 
 export const COMPOSER_URI = 'ui://obsidian-integrated/composer-v1.html';
 export function registerComposer(server: McpServer, service: KnowledgeService) {

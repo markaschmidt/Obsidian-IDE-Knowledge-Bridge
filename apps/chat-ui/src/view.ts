@@ -1,9 +1,5 @@
-import type {
-  ComposerInitial,
-  ComposerPage,
-  ComposerBundle,
-} from '@obsidian-integrated/local-service';
-import type { DocumentChoice } from '@obsidian-integrated/core';
+import type { ComposerInitial, ComposerPage, ComposerBundle } from '@knowledge-bridge/core/service';
+import type { DocumentChoice } from '@knowledge-bridge/core';
 
 export interface ComposerBridge {
   request(input: Record<string, unknown>): Promise<unknown>;
@@ -196,7 +192,7 @@ export function mountComposer(root: HTMLElement, initial: ComposerInitial, bridg
   };
   element('status').textContent = initial.vaults.length
     ? 'Choose a vault to see its documents.'
-    : 'No vaults are scoped. Configure one in Obsidian Integrated settings.';
+    : 'No vaults are scoped. Configure one in Obsidian IDE Knowledge Bridge settings.';
   render();
   if (vault.value) void load();
   return () => {

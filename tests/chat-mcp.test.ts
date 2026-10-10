@@ -9,7 +9,7 @@ import {
   type ElicitResult,
 } from '@modelcontextprotocol/sdk/types.js';
 import { createServer } from '../apps/mcp-server/src/server.js';
-import { approveProfile, readRegistry, saveJson } from '@obsidian-integrated/local-service';
+import { approveProfile, readRegistry, saveJson } from '@knowledge-bridge/core/service';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fixture } from './helpers.js';

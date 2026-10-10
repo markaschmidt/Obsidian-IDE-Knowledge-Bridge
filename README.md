@@ -1,8 +1,8 @@
-# Obsidian Integrated
+# Obsidian IDE Knowledge Bridge
 
 Workspace-scoped knowledge exchange between **Obsidian**, **Cursor IDE and its agent/CLI**, and **VS Code**. Vaults remain the source of truth; projects retrieve only their approved notes and write session knowledge to an explicit inbox.
 
-**Status: v0.3 development preview.** This repository includes a functioning local MCP server, a shared Cursor/VS Code extension, and a desktop Obsidian companion. The shared chip picker is browser-tested through the official MCP Apps SDK; signed-in chat rendering and real-vault end-to-end acceptance remain manual. Semantic/vector RAG, background synchronization, and a supported live Rhen API are roadmap work. No private Rhen source or personal vault notes are included.
+**Status: v0.4 development preview.** This repository owns the Cursor/VS Code extension, shared chat UI and local MCP server. The Obsidian companion is independently maintained in [Knowledge Bridge](https://github.com/markaschmidt/KnowledgeBridge), and policy/retrieval in [Knowledge Bridge Core](https://github.com/markaschmidt/KnowledgeBridgeCore). The shared chip picker is browser-tested through the official MCP Apps SDK; signed-in chat rendering and real-vault end-to-end acceptance remain manual. Semantic/vector RAG, background synchronization, and a supported live Rhen API are roadmap work. No private Rhen source or personal vault notes are included.
 
 ## What is implemented
 
@@ -12,7 +12,7 @@ Workspace-scoped knowledge exchange between **Obsidian**, **Cursor IDE and its a
 - Shared retrieval: local BM25-style ranking, Markdown heading chunks, aliases, wiki/Markdown links, backlinks, one-hop graph expansion, revision hashes and line citations. Scope filters run before ranking and graph construction.
 - MCP tools for document selection, status, search, reading, neighbors and idempotent create-only capture. The same server supports Cursor's IDE and CLI and other local MCP clients.
 - A single VSIX codebase with runtime detection of Cursor's MCP registration API and VS Code's MCP provider API. Manual configuration export is available for CLI use.
-- An Obsidian settings tab and commands for scoped browsing, native graph neighbors and selection capture.
+- Interoperability with the separately released Knowledge Bridge Obsidian companion through the same approved registry/profile contract.
 - Conservative Rhen compatibility: deny known locked paths, skip sealed envelopes, reject unreadable installed policy, and never request keys or unlock notes.
 
 ## Start developing
@@ -30,26 +30,20 @@ The demo creates and removes a synthetic temporary vault. It does not inspect yo
 
 Build outputs:
 
-| Output                          | Purpose                                                |
-| ------------------------------- | ------------------------------------------------------ |
-| `dist/obsidian-integrated.vsix` | Install from VSIX in Cursor or VS Code                 |
-| `dist/mcp/server.mjs`           | Bundled standalone MCP server                          |
-| `dist/obsidian-integrated/`     | Desktop Obsidian plugin: `main.js` and `manifest.json` |
+| Output                                    | Purpose                                |
+| ----------------------------------------- | -------------------------------------- |
+| `dist/obsidian-ide-knowledge-bridge.vsix` | Install from VSIX in Cursor or VS Code |
+| `dist/mcp/server.mjs`                     | Bundled standalone MCP server          |
 
-In the editor, run **Obsidian Integrated: Manage Vaults and Workspace**. Register a vault, then configure its include/exclude patterns and optional existing capture folder for the current workspace. For a multi-root workspace, save the `.code-workspace` file first; one explicit profile controls the workspace as a whole. [Setup instructions](docs/SETUP.md) cover the CLI, Obsidian and project folders with different scopes.
+In the editor, run **Obsidian IDE Knowledge Bridge: Manage Vaults and Workspace**. Register a vault, then configure its include/exclude patterns and optional existing capture folder for the current workspace. For a multi-root workspace, save the `.code-workspace` file first; one explicit profile controls the workspace as a whole. [Setup instructions](docs/SETUP.md) cover the CLI, Obsidian and project folders with different scopes.
 
 ## Layout
 
 ```text
 apps/
   vscode-extension/     One editor extension for Cursor and VS Code
-  obsidian-plugin/      Settings and native Obsidian graph integration
   mcp-server/           Agent/harness protocol adapter
   chat-ui/              Shared chip picker for MCP Apps and editor panels
-packages/
-  core/                 Contracts, profile validation, Markdown, graph and retrieval
-  local-service/        Registry approvals, filesystem policy, retrieval and capture
-  rhen-adapter/         Conservative disk-policy compatibility; no cryptography
 docs/                   Architecture, source review, scope/RAG design and roadmap
 examples/               Portable workspace and machine-registry templates
 integrations/           Shared /obsidian skill and optional Cursor rule template
@@ -65,3 +59,9 @@ This preview uses fresh filesystem validation with an in-memory parse cache. It 
 Capture adds new Markdown notes with provenance. Existing-note updates, bidirectional conflict resolution, automatic full-session exports, attachments/OCR, remote workspaces and cloud agents are not implemented. Rhen folder unlock exceptions remain denied until there is an authenticated policy contract. Keep the vault out of the code workspace's ordinary indexing roots when using scoped MCP retrieval.
 
 MIT licensed. Rhen Vault is a separate product and its source is not part of this repository.
+
+## Independent updates and existing installations
+
+See [RELEASING.md](RELEASING.md). This repository has a separate remote and release artifact from the Obsidian companion and core. The shared engine is pinned to a commit archive with a lockfile integrity hash and bundled into the VSIX/server. Builds do not read sibling repositories. Keep `composer.html` beside `server.mjs` when moving the standalone MCP bundle.
+
+The display title is **Obsidian IDE Knowledge Bridge**. Extension ID `markaschmidt.obsidian-integrated`, command/configuration IDs, storage paths and `/obsidian` remain compatible with v0.3. Installing the updated VSIX upgrades the existing extension. Run **Enable /obsidian in This Workspace** to update an unmodified shipped skill; edited skills remain intact. The GitHub repository was renamed from Obsidian-Integrated with its history preserved.

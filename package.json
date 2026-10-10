@@ -1,11 +1,10 @@
 {
-  "name": "obsidian-integrated",
-  "version": "0.3.0",
+  "name": "obsidian-ide-knowledge-bridge",
+  "version": "0.4.0",
   "private": true,
   "description": "Workspace-scoped knowledge exchange between Obsidian, Cursor and VS Code",
   "type": "module",
   "workspaces": [
-    "packages/*",
     "apps/*"
   ],
   "engines": {
@@ -20,7 +19,7 @@
     "test:stdio": "tsx --test tests/integration/*.test.ts",
     "test:ui": "tsx --test tests/ui/*.test.ts",
     "check": "npm run typecheck && npm test && npm run build && npm run test:stdio",
-    "package:extension": "npm run build && cd apps/vscode-extension && vsce package --no-dependencies --out ../../dist/obsidian-integrated.vsix",
+    "package:extension": "npm run build && cd apps/vscode-extension && vsce package --no-dependencies --out ../../dist/obsidian-ide-knowledge-bridge.vsix",
     "demo": "tsx scripts/demo.ts",
     "benchmark": "tsx scripts/benchmark.ts"
   },
@@ -34,5 +33,8 @@
     "prettier": "^3.6.2",
     "tsx": "^4.20.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@knowledge-bridge/core": "https://codeload.github.com/markaschmidt/KnowledgeBridgeCore/tar.gz/f70bcadb1af97050f3ff435d9d2c67e4423ec014"
   }
 }

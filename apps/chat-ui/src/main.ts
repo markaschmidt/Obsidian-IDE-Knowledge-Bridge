@@ -1,6 +1,6 @@
 import { App, applyDocumentTheme, applyHostStyleVariables } from '@modelcontextprotocol/ext-apps';
 import { mountComposer } from './view.js';
-import type { ComposerInitial, ComposerBundle } from '@obsidian-integrated/local-service';
+import type { ComposerInitial, ComposerBundle } from '@knowledge-bridge/core/service';
 
 declare const acquireVsCodeApi: undefined | (() => { postMessage(value: unknown): void });
 const root = document.getElementById('composer')!;
@@ -57,7 +57,7 @@ if (typeof acquireVsCodeApi === 'function') {
       root.textContent = error.message;
     });
 } else {
-  const app = new App({ name: 'Obsidian context picker', version: '0.3.0' });
+  const app = new App({ name: 'Obsidian context picker', version: '0.4.0' });
   let mounted = false;
   let dispose: (() => void) | undefined;
   let sessionId: string | undefined;

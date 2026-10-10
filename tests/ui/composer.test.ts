@@ -9,7 +9,7 @@ import {
   readRegistry,
   saveJson,
   type ComposerBundle,
-} from '@obsidian-integrated/local-service';
+} from '@knowledge-bridge/core/service';
 import { fixture } from '../helpers.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';

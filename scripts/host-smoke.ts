@@ -4,7 +4,7 @@ import { spawn } from 'node:child_process';
 import { mkdir, readFile, copyFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fixture } from '../tests/helpers.js';
-import { saveJson, approveProfile } from '@obsidian-integrated/local-service';
+import { saveJson, approveProfile } from '@knowledge-bridge/core/service';
 
 const executable = process.argv[2];
 if (!executable)

@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { KnowledgeService, captureSchema } from '@obsidian-integrated/local-service';
-import { pickDocuments } from '@obsidian-integrated/core';
+import { KnowledgeService, captureSchema } from '@knowledge-bridge/core/service';
+import { pickDocuments } from '@knowledge-bridge/core';
 import { mcpDocumentPicker } from './picker.js';
 import {
   getUiCapability,
@@ -12,7 +12,7 @@ import { registerComposer, COMPOSER_URI } from './composer.js';
 import { registerObsidianPrompt } from './prompts.js';
 
 export function createServer(service: KnowledgeService): McpServer {
-  const server = new McpServer({ name: 'obsidian-integrated', version: '0.3.0' });
+  const server = new McpServer({ name: 'obsidian-integrated', version: '0.4.0' });
   const composer = registerComposer(server, service);
   registerObsidianPrompt(server, service);
   const result = (value: unknown) => ({
@@ -78,7 +78,7 @@ export function createServer(service: KnowledgeService): McpServer {
         return result({
           status: 'picker_unavailable',
           message:
-            'This client does not support MCP Apps or forms. In the editor run Obsidian Integrated: Open Obsidian Context Builder, choose Copy for chat, then paste into this conversation. No documents were read or selected.',
+            'This client does not support MCP Apps or forms. In the editor run Obsidian IDE Knowledge Bridge: Open Obsidian Context Builder, choose Copy for chat, then paste into this conversation. No documents were read or selected.',
         });
       try {
         const selection = await pickDocuments(service, picker, { query, signal: extra.signal });

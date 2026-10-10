@@ -45,14 +45,3 @@ await copyFile('dist/mcp/composer.html', 'apps/vscode-extension/dist/composer.ht
 await copyFile('LICENSE', 'apps/vscode-extension/LICENSE');
 await mkdir('apps/vscode-extension/dist/skill', { recursive: true });
 await copyFile('integrations/obsidian/SKILL.md', 'apps/vscode-extension/dist/skill/SKILL.md');
-await build({
-  ...common,
-  entryPoints: ['apps/obsidian-plugin/src/main.ts'],
-  outfile: 'apps/obsidian-plugin/main.js',
-  format: 'cjs',
-  external: ['obsidian'],
-  target: 'es2022',
-});
-await mkdir('dist/obsidian-integrated', { recursive: true });
-await copyFile('apps/obsidian-plugin/main.js', 'dist/obsidian-integrated/main.js');
-await copyFile('apps/obsidian-plugin/manifest.json', 'dist/obsidian-integrated/manifest.json');

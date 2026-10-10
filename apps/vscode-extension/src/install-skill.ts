@@ -2,7 +2,10 @@ import { mkdir, realpath, lstat, open, readFile, rename, unlink } from 'node:fs/
 import { join } from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 
-const shippedHashes = new Set(['6c08d7073cf81fdb1bf83d0234c86937bfab611db88e3a8a46d4f9d754d2e90c']);
+const shippedHashes = new Set([
+  '4e03faa56aba3803ecd9111f067b6bc7a18f2b20c96e7bc8742262c68a5ca981',
+  '6c08d7073cf81fdb1bf83d0234c86937bfab611db88e3a8a46d4f9d754d2e90c',
+]);
 const hash = (contents: string) =>
   createHash('sha256').update(contents.replace(/\r\n/g, '\n')).digest('hex');
 

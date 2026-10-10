@@ -1,6 +1,6 @@
 # Architecture
 
-The product has three host surfaces and one policy model. Editor UI and agent tools must go through the same scoped service rather than maintaining separate interpretations of vault access.
+The product has three repositories and one policy model. This repository owns the editor/harness; KnowledgeBridge owns the Obsidian companion; KnowledgeBridgeCore owns the shared engine. Both consumers pin a compiled core commit archive and bundle it independently. Editor UI and agent tools must go through the same scoped service rather than maintaining separate interpretations of vault access.
 
 ```mermaid
 flowchart LR

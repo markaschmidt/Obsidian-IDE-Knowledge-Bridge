@@ -9,7 +9,7 @@ import {
   type DocumentPicker,
   type DocumentPage,
   type DocumentAnswer,
-} from '@obsidian-integrated/core';
+} from '@knowledge-bridge/core';
 
 type Form = ElicitRequestFormParams['requestedSchema'];
 const label = (text: string) => text.replace(/[\x00-\x1f]/g, ' ').slice(0, 240);

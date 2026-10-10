@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { completable } from '@modelcontextprotocol/sdk/server/completable.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { KnowledgeService } from '@obsidian-integrated/local-service';
+import type { KnowledgeService } from '@knowledge-bridge/core/service';
 
 /** Optional native argument route. Hosts decide how these fields are rendered. */
 export function registerObsidianPrompt(server: McpServer, service: KnowledgeService) {

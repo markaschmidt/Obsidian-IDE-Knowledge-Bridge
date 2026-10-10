@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { pickDocuments, type DocumentPicker } from '@obsidian-integrated/core';
-import type { KnowledgeService } from '@obsidian-integrated/local-service';
+import { pickDocuments, type DocumentPicker } from '@knowledge-bridge/core';
+import type { KnowledgeService } from '@knowledge-bridge/core/service';
 
 const nativePicker: DocumentPicker = {
   async chooseVault(vaults) {

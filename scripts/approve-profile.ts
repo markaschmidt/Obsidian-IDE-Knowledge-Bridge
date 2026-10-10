@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { approveProfile, readProfile } from '@obsidian-integrated/local-service';
+import { approveProfile, readProfile } from '@knowledge-bridge/core/service';
 const [registry, profile] = process.argv.slice(2);
 if (!registry || !profile)
   throw new Error('Usage: approve-profile.ts <registry.json> <workspace.json>');

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { ComposerSessions, saveJson, approveProfile } from '@obsidian-integrated/local-service';
+import { ComposerSessions, saveJson, approveProfile } from '@knowledge-bridge/core/service';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer } from '../apps/mcp-server/src/server.js';

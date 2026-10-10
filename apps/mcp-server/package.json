@@ -1,13 +1,12 @@
 {
   "name": "@obsidian-integrated/mcp-server",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "^1.7.5",
     "@modelcontextprotocol/sdk": "^1.32.1",
-    "@obsidian-integrated/core": "0.3.0",
-    "@obsidian-integrated/local-service": "0.3.0",
-    "zod": "^3.25.0"
+    "zod": "^3.25.0",
+    "@knowledge-bridge/core": "https://codeload.github.com/markaschmidt/KnowledgeBridgeCore/tar.gz/f70bcadb1af97050f3ff435d9d2c67e4423ec014"
   }
 }
