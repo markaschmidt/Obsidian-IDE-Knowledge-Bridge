@@ -1,0 +1,6 @@
+node_modules/
+dist/
+apps/*/dist/
+apps/obsidian-plugin/main.js*
+apps/vscode-extension/LICENSE
+package-lock.json

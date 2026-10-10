@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.vsix
+apps/obsidian-plugin/main.js
+apps/obsidian-plugin/main.js.map
+apps/vscode-extension/LICENSE
+*.tsbuildinfo
+.obsidian-integrated/
+*.local.json
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.obsidian/
+coverage/

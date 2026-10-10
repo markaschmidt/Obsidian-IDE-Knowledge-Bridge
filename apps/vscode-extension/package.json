@@ -1,0 +1,91 @@
+{
+  "name": "obsidian-integrated",
+  "displayName": "Obsidian Integrated",
+  "version": "0.1.0",
+  "description": "Manage workspace-scoped Obsidian knowledge for Cursor and VS Code",
+  "publisher": "markaschmidt",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markaschmidt/Obsidian-Integrated.git"
+  },
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "main": "./dist/extension.cjs",
+  "categories": [
+    "Other"
+  ],
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Vault access requires a trusted, approved workspace."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "This preview supports local desktop vaults and workspaces."
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "obsidianIntegrated.manageVaults",
+        "title": "Obsidian Integrated: Manage Vaults and Workspace"
+      },
+      {
+        "command": "obsidianIntegrated.search",
+        "title": "Obsidian Integrated: Search Workspace Knowledge"
+      },
+      {
+        "command": "obsidianIntegrated.capture",
+        "title": "Obsidian Integrated: Capture Selection to Vault"
+      },
+      {
+        "command": "obsidianIntegrated.exportMcp",
+        "title": "Obsidian Integrated: Export Cursor CLI Configuration"
+      }
+    ],
+    "configuration": {
+      "title": "Obsidian Integrated",
+      "properties": {
+        "obsidianIntegrated.profile": {
+          "type": "string",
+          "default": ".obsidian-integrated/workspace.json",
+          "scope": "window",
+          "description": "Profile path relative to the saved workspace file or single workspace folder. Manage and approve vault access with the Manage Vaults and Workspace command."
+        },
+        "obsidianIntegrated.nodePath": {
+          "type": "string",
+          "default": "node",
+          "scope": "machine",
+          "description": "Node.js 22.16+ executable for the bundled MCP server."
+        }
+      }
+    },
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "obsidian-integrated",
+        "label": "Obsidian Integrated"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "obsidianIntegrated.capture",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "@obsidian-integrated/core": "0.1.0",
+    "@obsidian-integrated/local-service": "0.1.0"
+  }
+}

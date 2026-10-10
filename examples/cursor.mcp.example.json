@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "obsidian-integrated": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:/REPLACE/Obsidian-Integrated/dist/mcp/server.mjs",
+        "--registry",
+        "C:/REPLACE/private/vaults.json",
+        "--profile",
+        "${workspaceFolder}/.obsidian-integrated/workspace.json"
+      ]
+    }
+  }
+}

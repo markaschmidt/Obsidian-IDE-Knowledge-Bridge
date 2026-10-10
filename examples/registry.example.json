@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "vaults": [
+    { "id": "research", "name": "Research", "root": "C:\\REPLACE\\YourVault", "rhen": "required" }
+  ],
+  "approvals": {}
+}

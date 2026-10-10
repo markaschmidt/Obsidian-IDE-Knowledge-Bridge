@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "workspaceId": "project-alpha",
+  "name": "Project Alpha",
+  "scopes": [
+    {
+      "vaultId": "research",
+      "include": ["Projects/Alpha/**/*.md", "Shared/Engineering/**/*.md"],
+      "exclude": ["**/Private/**"],
+      "tagsAny": [],
+      "captureFolder": "Projects/Alpha/Inbox"
+    }
+  ],
+  "retrieval": { "maxResults": 8, "maxChars": 12000, "graphHops": 1 }
+}
