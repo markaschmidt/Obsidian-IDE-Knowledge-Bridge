@@ -16,6 +16,7 @@ import { digest, loadApproved, profileDigest } from './config.js';
 import { listMarkdown, readNoteFile, safePath } from './files.js';
 export * from './config.js';
 export * from './files.js';
+export * from './composer.js';
 
 export const captureSchema = z
   .object({

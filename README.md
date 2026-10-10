@@ -2,11 +2,11 @@
 
 Workspace-scoped knowledge exchange between **Obsidian**, **Cursor IDE and its agent/CLI**, and **VS Code**. Vaults remain the source of truth; projects retrieve only their approved notes and write session knowledge to an explicit inbox.
 
-**Status: v0.2 development preview.** This repository includes a functioning local MCP server, a shared Cursor/VS Code extension, and a desktop Obsidian companion. Automated tests cover the chat picker protocol; actual chat rendering and real-vault end-to-end acceptance remain manual. Semantic/vector RAG, background synchronization, and a supported live Rhen API are roadmap work. No private Rhen source or personal vault notes are included.
+**Status: v0.3 development preview.** This repository includes a functioning local MCP server, a shared Cursor/VS Code extension, and a desktop Obsidian companion. The shared chip picker is browser-tested through the official MCP Apps SDK; signed-in chat rendering and real-vault end-to-end acceptance remain manual. Semantic/vector RAG, background synchronization, and a supported live Rhen API are roadmap work. No private Rhen source or personal vault notes are included.
 
 ## What is implemented
 
-- `/obsidian` in Agent chat: submit the command, choose a vault if more than one is scoped, then check the documents to share. The shared skill calls an MCP form; the editor controls its appearance. A native copy-and-paste picker supports clients without chat forms. See [the chat workflow and limits](docs/CHAT.md).
+- `/obsidian` in Agent chat: submit the command, choose a scoped vault, then search documents and build removable chips. One shared MCP App supplies the controls in both editors; the same UI is available as an editor panel with **Copy for chat**. Optional native prompt autocomplete chains vault and document arguments; older clients retain forms. See [the chat workflow and limits](docs/CHAT.md).
 - Per-workspace profiles with multiple vaults, include/exclude globs, optional tag filters, read-only defaults and an explicit capture destination per vault.
 - A machine-local vault registry managed from the extension's **Manage Vaults and Workspace** settings command. Workspace profiles reference vault IDs, not absolute vault locations. Changed profiles require renewed local approval.
 - Shared retrieval: local BM25-style ranking, Markdown heading chunks, aliases, wiki/Markdown links, backlinks, one-hop graph expansion, revision hashes and line citations. Scope filters run before ranking and graph construction.
@@ -45,6 +45,7 @@ apps/
   vscode-extension/     One editor extension for Cursor and VS Code
   obsidian-plugin/      Settings and native Obsidian graph integration
   mcp-server/           Agent/harness protocol adapter
+  chat-ui/              Shared chip picker for MCP Apps and editor panels
 packages/
   core/                 Contracts, profile validation, Markdown, graph and retrieval
   local-service/        Registry approvals, filesystem policy, retrieval and capture

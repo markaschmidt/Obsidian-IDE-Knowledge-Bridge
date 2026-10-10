@@ -21,6 +21,7 @@ import {
 import { cursorMcp } from './cursor.js';
 import { installWorkspaceSkill } from './install-skill.js';
 import { copyDocumentsForChat } from './chat.js';
+import { openComposer } from './composer.js';
 
 export function activate(context: vscode.ExtensionContext): void {
   const registryPath = join(context.globalStorageUri.fsPath, 'vaults.json');
@@ -97,7 +98,7 @@ export function activate(context: vscode.ExtensionContext): void {
                 nodeCommand(),
                 serverArgs(),
                 {},
-                '0.2.0',
+                '0.3.0',
               ),
             ];
           } catch {
@@ -307,6 +308,18 @@ export function activate(context: vscode.ExtensionContext): void {
   command('obsidianIntegrated.manageVaults', manage);
   command('obsidianIntegrated.enableChat', enableChat);
   command('obsidianIntegrated.copyDocumentsForChat', () => copyDocumentsForChat(service()));
+  context.subscriptions.push(
+    vscode.commands.registerCommand('obsidianIntegrated.openComposer', async () => {
+      try {
+        return await openComposer(context, service());
+      } catch (error) {
+        void vscode.window.showErrorMessage(
+          error instanceof Error ? error.message : 'Could not open Obsidian context',
+        );
+        return { mounted: false };
+      }
+    }),
+  );
   command('obsidianIntegrated.search', async () => {
     const query = await vscode.window.showInputBox({
       title: 'Search this workspace’s Obsidian knowledge',

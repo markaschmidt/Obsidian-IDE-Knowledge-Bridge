@@ -31,7 +31,9 @@ flowchart LR
 
 ## Knowledge flow
 
-**Explicit chat context:** a shared workspace skill invokes `knowledge_select` → `core` manages per-invocation vault/document selection → MCP displays host-rendered elicitation forms → `local-service` checks the same profile and selected note revisions again → selected bodies return as resources with provenance. The native clipboard fallback uses the same selection state machine. Neither path expands graph neighbors or persists selection across chats. See [CHAT.md](CHAT.md).
+**Explicit chat context:** the workspace skill invokes `knowledge_select` → the server negotiates MCP Apps support → `chat-ui` renders shared vault/document chips → UI-only `knowledge_picker` operations use `local-service/ComposerSessions` → explicit delivery rechecks policy and selected revisions → the app sends the chosen reference bundle to the current chat. App-only metadata keeps intermediate choices out of model tool output. Random session handles isolate concurrent pickers; expiry, revision checks and close invalidate stale selections.
+
+The same built HTML runs in an editor webview with a nonce-based content policy and a clipboard bridge. Its host revalidates before copying. Older MCP clients receive elicitation forms backed by the existing `core` picker. Native MCP prompts expose dependent single-document completion with bounded suggestions and per-server request/concurrency limits. All routes use the same service boundaries and budget, without automatic graph expansion. See [CHAT.md](CHAT.md).
 
 **Obsidian → session:** search tool → reload registry/profile → confirm local approval → filter paths → enforce Rhen → read raw disk text → reject encrypted envelopes → parse/filter tags → rank chunks → add in-scope graph neighbors → return citations. External links are not fetched. Note text is explicitly untrusted reference data.
 

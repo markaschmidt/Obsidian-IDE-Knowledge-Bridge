@@ -3,9 +3,18 @@ import { z } from 'zod';
 import { KnowledgeService, captureSchema } from '@obsidian-integrated/local-service';
 import { pickDocuments } from '@obsidian-integrated/core';
 import { mcpDocumentPicker } from './picker.js';
+import {
+  getUiCapability,
+  RESOURCE_MIME_TYPE,
+  registerAppTool,
+} from '@modelcontextprotocol/ext-apps/server';
+import { registerComposer, COMPOSER_URI } from './composer.js';
+import { registerObsidianPrompt } from './prompts.js';
 
 export function createServer(service: KnowledgeService): McpServer {
-  const server = new McpServer({ name: 'obsidian-integrated', version: '0.2.0' });
+  const server = new McpServer({ name: 'obsidian-integrated', version: '0.3.0' });
+  const composer = registerComposer(server, service);
+  registerObsidianPrompt(server, service);
   const result = (value: unknown) => ({
     content: [{ type: 'text' as const, text: JSON.stringify(value) }],
   });
@@ -22,11 +31,13 @@ export function createServer(service: KnowledgeService): McpServer {
         ],
       }));
   const read = { readOnlyHint: true, destructiveHint: false, openWorldHint: false };
-  server.registerTool(
+  registerAppTool(
+    server,
     'knowledge_select',
     {
+      _meta: { ui: { resourceUri: COMPOSER_URI } },
       description:
-        'Open the user-facing Obsidian document picker in this chat. Choose a scoped vault only if there is more than one, then let the user select documents. Returns only those documents as context. Invoke for /obsidian; never guess selections or replace a cancelled picker with a search.',
+        'Open the Obsidian context builder in this chat. The user chooses a scoped vault and document chips, then presses Add to chat. Opening the app adds no note bodies; wait for the subsequent user message. Older clients use forms that return the selection directly. Invoke for /obsidian; never guess selections or replace cancellation with search.',
       inputSchema: {
         query: z
           .string()
@@ -37,12 +48,37 @@ export function createServer(service: KnowledgeService): McpServer {
       annotations: read,
     },
     async ({ query }, extra) => {
+      if (
+        getUiCapability(server.server.getClientCapabilities())?.mimeTypes?.includes(
+          RESOURCE_MIME_TYPE,
+        )
+      ) {
+        try {
+          const state = await composer.begin();
+          return {
+            content: [
+              {
+                type: 'text',
+                text: 'The Obsidian picker is open. Wait for the user to select a vault and documents and press Add to chat. No note bodies have been added. Do not select or read documents on their behalf.',
+              },
+            ],
+            _meta: { picker: { ...state, query: query ?? '' } },
+          };
+        } catch (error) {
+          return {
+            isError: true,
+            content: [
+              { type: 'text', text: error instanceof Error ? error.message : 'Picker failed' },
+            ],
+          };
+        }
+      }
       const picker = mcpDocumentPicker(server, extra.signal);
       if (!picker)
         return result({
           status: 'picker_unavailable',
           message:
-            'This client does not support MCP forms. In the editor run Obsidian Integrated: Copy Documents for Chat, then paste the selected context into this conversation. No documents were read or selected.',
+            'This client does not support MCP Apps or forms. In the editor run Obsidian Integrated: Open Obsidian Context Builder, choose Copy for chat, then paste into this conversation. No documents were read or selected.',
         });
       try {
         const selection = await pickDocuments(service, picker, { query, signal: extra.signal });

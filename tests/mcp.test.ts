@@ -17,7 +17,7 @@ test('MCP exposes a fixed workspace with retrieval and capture round trip', asyn
     await client.close();
     await server.close();
   });
-  assert.equal((await client.listTools()).tools.length, 6);
+  assert.equal((await client.listTools()).tools.length, 7);
   const result = await client.callTool({
     name: 'knowledge_search',
     arguments: { query: 'retrieval' },

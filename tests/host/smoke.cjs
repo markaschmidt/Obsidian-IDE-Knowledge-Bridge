@@ -20,6 +20,8 @@ exports.run = async () => {
     'utf8',
   );
   assert.equal(installed, bundled);
+  const composer = await vscode.commands.executeCommand('obsidianIntegrated.openComposer');
+  assert.equal(composer?.mounted, true, 'Shared context builder did not mount in the real webview');
   const result = {
     app: vscode.env.appName,
     version: vscode.version,
@@ -27,6 +29,7 @@ exports.run = async () => {
     active: extension.isActive,
     trusted: vscode.workspace.isTrusted,
     slashSkillInstalled: true,
+    sharedComposerMounted: composer.mounted,
     cursorMcpApi: typeof vscode.cursor?.mcp?.registerServer === 'function',
     vscodeMcpApi: typeof vscode.lm?.registerMcpServerDefinitionProvider === 'function',
   };

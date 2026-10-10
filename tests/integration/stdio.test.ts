@@ -25,6 +25,10 @@ test('built standalone server speaks MCP over stdio', async (t) => {
     }),
   );
   t.after(() => client.close());
+  const ui = await client.readResource({ uri: 'ui://obsidian-integrated/composer-v1.html' });
+  assert.equal(ui.contents[0]!.mimeType, 'text/html;profile=mcp-app');
+  assert.match((ui.contents[0] as { text: string }).text, /Obsidian context picker/);
+  assert.doesNotMatch((ui.contents[0] as { text: string }).text, /COMPOSER_SCRIPT/);
   const result = await client.callTool({
     name: 'knowledge_search',
     arguments: { query: 'retrieval' },

@@ -1,12 +1,13 @@
 {
   "name": "@obsidian-integrated/mcp-server",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@obsidian-integrated/core": "0.2.0",
-    "@obsidian-integrated/local-service": "0.2.0",
+    "@modelcontextprotocol/ext-apps": "^1.7.5",
     "@modelcontextprotocol/sdk": "^1.32.1",
+    "@obsidian-integrated/core": "0.3.0",
+    "@obsidian-integrated/local-service": "0.3.0",
     "zod": "^3.25.0"
   }
 }

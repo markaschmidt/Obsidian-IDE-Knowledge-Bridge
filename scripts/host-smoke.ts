@@ -1,5 +1,5 @@
 // Optional local-host acceptance. Uses installed editor binaries and disposable profiles.
-// This checks extension activation and slash-skill installation, not chat rendering.
+// This checks activation, skill installation and shared webview startup, not signed-in chat.
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, copyFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';

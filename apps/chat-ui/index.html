@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Obsidian context picker</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: var(--font-sans, var(--vscode-font-family, system-ui, sans-serif));
+        color: var(--color-text-primary, var(--vscode-foreground, #e9e6f4));
+        background: var(--color-background-primary, var(--vscode-editor-background, #191821));
+        --accent: #a395f5;
+        --line: color-mix(in srgb, currentColor 18%, transparent);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 20px;
+      }
+      #composer {
+        max-width: 780px;
+        margin: auto;
+      }
+      h1 {
+        font-size: 21px;
+        margin: 4px 0 8px;
+        font-weight: 650;
+      }
+      p {
+        line-height: 1.5;
+      }
+      .eyebrow {
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        color: var(--accent);
+        font-weight: 700;
+        margin: 0;
+      }
+      #workspace {
+        font-size: 12px;
+        opacity: 0.7;
+        margin: 0 0 20px;
+      }
+      .chain,
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+      .chain {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 20px;
+        min-height: 60px;
+      }
+      .command,
+      .vault-chip,
+      .document-chip {
+        border-radius: 18px;
+        font-size: 12px;
+        padding: 7px 10px;
+      }
+      .command {
+        background: color-mix(in srgb, var(--accent) 22%, transparent);
+        font-family: monospace;
+        font-weight: 700;
+      }
+      .vault-chip {
+        border: 1px solid var(--line);
+      }
+      select {
+        background: transparent;
+        color: inherit;
+        border: 0;
+        max-width: 220px;
+      }
+      option {
+        background: var(--vscode-dropdown-background, #292735);
+        color: var(--vscode-dropdown-foreground, #eee);
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 8px 12px;
+        background: transparent;
+        color: inherit;
+      }
+      button:hover:enabled {
+        border-color: var(--accent);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+      .document-chip {
+        border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+        max-width: 100%;
+        overflow-wrap: anywhere;
+      }
+      .search-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 650;
+        margin-bottom: 8px;
+      }
+      input[type='search'] {
+        width: 100%;
+        background: transparent;
+        color: inherit;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 10px 12px;
+      }
+      #status,
+      #count,
+      #page {
+        font-size: 12px;
+      }
+      #status {
+        min-height: 18px;
+        opacity: 0.8;
+      }
+      .documents {
+        max-height: 330px;
+        overflow: auto;
+      }
+      .document-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 11px 6px;
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+      }
+      input[type='checkbox'] {
+        accent-color: var(--accent);
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+      .document-row strong {
+        display: block;
+        font-size: 13px;
+        font-weight: 550;
+        overflow-wrap: anywhere;
+      }
+      .document-row small {
+        display: block;
+        opacity: 0.65;
+        margin-top: 3px;
+        overflow-wrap: anywhere;
+      }
+      nav,
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+      nav {
+        margin-top: 12px;
+      }
+      nav button {
+        font-size: 12px;
+      }
+      #error {
+        color: var(--vscode-errorForeground, #f18b92);
+        font-size: 13px;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 16px;
+        padding-top: 4px;
+      }
+      .notice {
+        font-size: 11px;
+        opacity: 0.65;
+      }
+      .actions {
+        justify-content: flex-end;
+        margin-top: 14px;
+      }
+      .primary {
+        background: var(--accent);
+        color: #201736;
+        font-weight: 650;
+        border-color: var(--accent);
+      }
+      @media (max-width: 420px) {
+        body {
+          padding: 12px;
+        }
+        h1 {
+          font-size: 18px;
+        }
+        .chain {
+          gap: 6px;
+        }
+        select {
+          max-width: 155px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="composer">Connecting to this workspace…</main>
+    <script>
+      /* COMPOSER_SCRIPT */
+    </script>
+  </body>
+</html>

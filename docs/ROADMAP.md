@@ -10,6 +10,8 @@ Version 0.2 adds the shared `/obsidian` workspace skill, in-chat MCP vault/docum
 
 ## Phase 1 — host acceptance and settings UX
 
+Version 0.3 implements one chip UI for MCP Apps and editor panels, plus optional dependent MCP prompt arguments. Synthetic browser checks exercise selection and the official Apps bridge; isolated editor-host checks cover webview startup. Signed-in chat invocation, host framing and message delivery still require acceptance in each product. The builder opens after slash-command submission; custom native input-composer tokens are not claimed.
+
 Install the VSIX in current Cursor and VS Code and the companion in a disposable Obsidian vault. Test every command, MCP registration/unregistration, reload, changed settings, multiple windows, multi-root profiles and disabled trust. Record exact host versions. Add extension-host automation and an Obsidian harness where feasible.
 
 Build a native settings view for vaults, project bindings, scope previews, denied reasons, read/write capabilities and index health. Show which workspace is connected in each host. Preserve the portable profile / private catalog split. Add a selected-profile picker to the Obsidian companion and an explicit pairing action from the editor. Decide whether future vault registration in Obsidian writes the shared catalog via a single coordinator.
@@ -40,15 +42,15 @@ Remote environments, containers, mobile Obsidian, cloud agents and multiple mach
 
 ## Acceptance matrix
 
-| Workflow                               | Automated foundation                                     | Host acceptance still required                                                |
-| -------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `/obsidian` vault / document selection | Forms, resources, cancellation and compiled stdio tested | Actual Cursor and VS Code skill discovery, tool invocation and form rendering |
-| Scoped vault search / read / graph     | Yes                                                      | Cursor, VS Code and Obsidian UI                                               |
-| New note capture / retry / conflict    | Yes                                                      | Obsidian file detection and live sync                                         |
-| Cursor agent + CLI MCP                 | Protocol/process tested                                  | Actual agent/tool selection and exported config                               |
-| VS Code MCP provider                   | Compiled                                                 | Installed host registration and approval UX                                   |
-| Multi-root workspace                   | Specified and implemented                                | Multiple saved workspaces and windows                                         |
-| Rhen lock, envelope, malformed policy  | Synthetic tests                                          | Joint live plugin tests and races                                             |
-| Semantic RAG / persistent index        | No                                                       | Planned                                                                       |
-| In-place note updates / merge          | No                                                       | Planned                                                                       |
-| Background session hooks               | No                                                       | Planned opt-in                                                                |
+| Workflow                               | Automated foundation                                                        | Host acceptance still required                        |
+| -------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `/obsidian` vault / document selection | Shared UI, Apps bridge, forms, stdio and real editor webview startup tested | Signed-in chat skill invocation, framing and delivery |
+| Scoped vault search / read / graph     | Yes                                                                         | Cursor, VS Code and Obsidian UI                       |
+| New note capture / retry / conflict    | Yes                                                                         | Obsidian file detection and live sync                 |
+| Cursor agent + CLI MCP                 | Protocol/process tested                                                     | Actual agent/tool selection and exported config       |
+| VS Code MCP provider                   | Compiled                                                                    | Installed host registration and approval UX           |
+| Multi-root workspace                   | Specified and implemented                                                   | Multiple saved workspaces and windows                 |
+| Rhen lock, envelope, malformed policy  | Synthetic tests                                                             | Joint live plugin tests and races                     |
+| Semantic RAG / persistent index        | No                                                                          | Planned                                               |
+| In-place note updates / merge          | No                                                                          | Planned                                               |
+| Background session hooks               | No                                                                          | Planned opt-in                                        |

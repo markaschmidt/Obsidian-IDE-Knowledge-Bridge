@@ -5,6 +5,21 @@ import { join } from 'node:path';
 import { installWorkspaceSkill } from '../apps/vscode-extension/src/install-skill.js';
 import { fixture } from './helpers.js';
 
+test('unmodified shipped skills upgrade while edited shipped skills remain intact', async (t) => {
+  const f = await fixture();
+  t.after(f.clean);
+  const legacy = await readFile(
+    new URL('./fixtures/obsidian-skill-v0.2.md', import.meta.url),
+    'utf8',
+  );
+  const installed = await installWorkspaceSkill(f.base, legacy);
+  assert.equal((await installWorkspaceSkill(f.base, 'new packaged skill')).status, 'updated');
+  assert.equal(await readFile(installed.path, 'utf8'), 'new packaged skill');
+  await writeFile(installed.path, legacy + '\nMy customization\n');
+  assert.equal((await installWorkspaceSkill(f.base, 'new packaged skill')).status, 'conflict');
+  assert.match(await readFile(installed.path, 'utf8'), /My customization/);
+});
+
 test('workspace skill installation is repeatable and preserves conflicting user content', async (t) => {
   const f = await fixture();
   t.after(f.clean);

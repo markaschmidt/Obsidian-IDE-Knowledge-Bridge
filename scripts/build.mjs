@@ -1,5 +1,20 @@
 import { build } from 'esbuild';
-import { mkdir, copyFile } from 'node:fs/promises';
+import { mkdir, copyFile, readFile, writeFile } from 'node:fs/promises';
+const browser = await build({
+  entryPoints: ['apps/chat-ui/src/main.ts'],
+  bundle: true,
+  platform: 'browser',
+  format: 'iife',
+  target: 'es2022',
+  minify: true,
+  write: false,
+});
+const composerHtml = (await readFile('apps/chat-ui/index.html', 'utf8')).replace(
+  '/* COMPOSER_SCRIPT */',
+  () => browser.outputFiles[0].text.replace(/<\/script/gi, '<\\/script'),
+);
+await mkdir('dist/mcp', { recursive: true });
+await writeFile('dist/mcp/composer.html', composerHtml);
 const common = {
   bundle: true,
   platform: 'node',
@@ -25,6 +40,8 @@ await build({
 });
 await mkdir('apps/vscode-extension/dist/mcp', { recursive: true });
 await copyFile('dist/mcp/server.mjs', 'apps/vscode-extension/dist/mcp/server.mjs');
+await copyFile('dist/mcp/composer.html', 'apps/vscode-extension/dist/mcp/composer.html');
+await copyFile('dist/mcp/composer.html', 'apps/vscode-extension/dist/composer.html');
 await copyFile('LICENSE', 'apps/vscode-extension/LICENSE');
 await mkdir('apps/vscode-extension/dist/skill', { recursive: true });
 await copyFile('integrations/obsidian/SKILL.md', 'apps/vscode-extension/dist/skill/SKILL.md');

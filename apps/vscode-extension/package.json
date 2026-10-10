@@ -1,7 +1,7 @@
 {
   "name": "obsidian-integrated",
   "displayName": "Obsidian Integrated",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Manage workspace-scoped Obsidian knowledge for Cursor and VS Code",
   "publisher": "markaschmidt",
   "license": "MIT",
@@ -34,6 +34,10 @@
   },
   "contributes": {
     "commands": [
+      {
+        "command": "obsidianIntegrated.openComposer",
+        "title": "Obsidian Integrated: Open Obsidian Context Builder"
+      },
       {
         "command": "obsidianIntegrated.enableChat",
         "title": "Obsidian Integrated: Enable /obsidian in This Workspace"
@@ -93,7 +97,8 @@
     }
   },
   "dependencies": {
-    "@obsidian-integrated/core": "0.2.0",
-    "@obsidian-integrated/local-service": "0.2.0"
+    "@obsidian-integrated/core": "0.3.0",
+    "@obsidian-integrated/local-service": "0.3.0",
+    "zod": "^3.25.0"
   }
 }
