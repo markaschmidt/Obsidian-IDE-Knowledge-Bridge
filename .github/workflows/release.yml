@@ -47,6 +47,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.bump.outputs.version }}
+          RELEASE_DEPLOY_KEY: ${{ secrets.RELEASE_DEPLOY_KEY }}
         run: |
           git fetch origin main
           remote_version="$(git show origin/main:package.json | node --input-type=module -e 'let source=""; process.stdin.on("data", (chunk) => source += chunk); process.stdin.on("end", () => console.log(JSON.parse(source).version));')"
@@ -56,8 +57,14 @@ jobs:
             git add package.json package-lock.json apps/vscode-extension/package.json apps/mcp-server/package.json
             git commit -m "chore(release): ${VERSION}"
             git tag "${VERSION}"
-            git push origin HEAD:main
-            git push origin "${VERSION}"
+            mkdir -p ~/.ssh
+            printf '%s\n' "$RELEASE_DEPLOY_KEY" > ~/.ssh/release_key
+            chmod 600 ~/.ssh/release_key
+            ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
+            export GIT_SSH_COMMAND="ssh -i ~/.ssh/release_key -o IdentitiesOnly=yes"
+            git push git@github.com:markaschmidt/Obsidian-IDE-Knowledge-Bridge.git HEAD:main
+            git push git@github.com:markaschmidt/Obsidian-IDE-Knowledge-Bridge.git "${VERSION}"
+            rm -f ~/.ssh/release_key
           fi
           if ! gh release view "${VERSION}" >/dev/null 2>&1; then
             gh release create "${VERSION}" dist/obsidian-ide-knowledge-bridge.vsix --title "${VERSION}" --generate-notes

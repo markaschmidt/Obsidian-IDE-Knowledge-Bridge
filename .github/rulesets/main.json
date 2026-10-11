@@ -10,8 +10,8 @@
   },
   "bypass_actors": [
     {
-      "actor_id": 15368,
-      "actor_type": "Integration",
+      "actor_id": 166120986,
+      "actor_type": "DeployKey",
       "bypass_mode": "always"
     }
   ],
