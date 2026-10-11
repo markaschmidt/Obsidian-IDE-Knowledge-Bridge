@@ -1,0 +1,29 @@
+name: Auto-merge to staging
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+    branches: [staging]
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  merge:
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Enable auto-merge when the title is valid
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BASE: staging
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          node scripts/check-pr-title.mjs
+          if gh pr merge "$PR_NUMBER" --squash --auto --repo "$GITHUB_REPOSITORY"; then
+            exit 0
+          fi
+          gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json autoMergeRequest,state --jq 'if .state == "MERGED" or .autoMergeRequest != null then "Auto-merge is already active" else error("Auto-merge was not enabled") end'

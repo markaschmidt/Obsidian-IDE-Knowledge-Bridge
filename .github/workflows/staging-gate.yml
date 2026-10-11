@@ -1,0 +1,19 @@
+name: Main promotion gate
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  staging:
+    name: Staging branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Accept only the staging branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$HEAD_REF" != "staging" ]; then
+            echo "Only staging can be merged into main. Open this change against staging first."
+            exit 1
+          fi
