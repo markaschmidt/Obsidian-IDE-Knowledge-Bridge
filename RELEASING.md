@@ -8,4 +8,8 @@ Release tags equal the package version, for example `0.4.0`. Push a version tag 
 
 The editor extension retains `markaschmidt.obsidian-integrated`, its command/configuration IDs and local storage location. The companion retains plugin ID `obsidian-integrated` and its saved settings. These compatibility IDs are intentional; visible titles are Knowledge Bridge and Obsidian IDE Knowledge Bridge. Existing scopes and approvals require no rename or broadening.
 
-Releases on GitHub do not imply Marketplace or Obsidian community-directory publication. Use Install from VSIX for the editor and copy the release assets into the existing plugin folder for Obsidian. Preserve plugin data.json and machine-local vault registries.
+Feature branches merge into `staging` through a pull request. The title has to be a Conventional Commit, such as `feat: add workspace search` or `fix(chat): keep the selected vault`. GitHub merges it only after that title check and the Ubuntu, Windows, and macOS test jobs all succeed. Direct pushes to `staging` and `main` are rejected.
+
+`staging` is the only branch that can merge into `main`. That pull request title starts with `promote: `. The merge bumps the version from the commits that reached `staging` (`feat` raises the minor version, a breaking change raises the major version, and every other promotion raises the patch version), tags that version, and publishes the same VSIX to the Visual Studio Marketplace and to Open VSX. Cursor searches Open VSX, so both publications are required. The GitHub release is created from that tag.
+
+Include `[skip release]` in a `promote:` title only when a promotion must merge without publishing. Marketplace tokens stay in the GitHub `marketplace` environment as `VSCE_PAT` and `OVSX_PAT`. The Obsidian companion is still installed from its GitHub release assets, not from these extension registries.

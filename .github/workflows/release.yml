@@ -1,0 +1,64 @@
+name: Release
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: startsWith(github.event.head_commit.message, 'promote:') && !contains(github.event.head_commit.message, '[skip release]')
+    runs-on: ubuntu-latest
+    environment: marketplace
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Require a merge from staging
+        run: |
+          if ! staging_parent="$(git rev-parse --verify HEAD^2 2>/dev/null)"; then
+            echo "A marketplace release has to be a merge commit from staging."
+            exit 1
+          fi
+          git fetch origin staging
+          git merge-base --is-ancestor "$staging_parent" origin/staging
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Collect commits introduced from staging
+        run: git log --format=%B%x1e HEAD^1..HEAD^2 > commit-records.txt
+      - run: npm ci
+      - name: Bump the release version
+        id: bump
+        run: echo "version=$(node scripts/bump-version.mjs commit-records.txt)" >> "$GITHUB_OUTPUT"
+      - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui
+      - run: npm run package:extension
+      - run: node scripts/verify-release.mjs "${{ steps.bump.outputs.version }}"
+      - name: Publish to Visual Studio Marketplace and Open VSX
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: node scripts/publish-vsix.mjs dist/obsidian-ide-knowledge-bridge.vsix
+      - name: Tag the version and publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          git fetch origin main
+          remote_version="$(git show origin/main:package.json | node --input-type=module -e 'let source=""; process.stdin.on("data", (chunk) => source += chunk); process.stdin.on("end", () => console.log(JSON.parse(source).version));')"
+          if [ "$remote_version" != "$VERSION" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package.json package-lock.json apps/vscode-extension/package.json apps/mcp-server/package.json
+            git commit -m "chore(release): ${VERSION}"
+            git tag "${VERSION}"
+            git push origin HEAD:main
+            git push origin "${VERSION}"
+          fi
+          if ! gh release view "${VERSION}" >/dev/null 2>&1; then
+            gh release create "${VERSION}" dist/obsidian-ide-knowledge-bridge.vsix --title "${VERSION}" --generate-notes
+          fi
